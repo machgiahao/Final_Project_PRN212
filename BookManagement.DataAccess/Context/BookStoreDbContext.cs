@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using BookManagement.BusinessObjects.Entities;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Configuration;
 
 namespace BookManagement.BusinessObjects.Context;
 
@@ -28,9 +29,18 @@ public partial class BookStoreDbContext : DbContext
 
     public virtual DbSet<User> Users { get; set; }
 
+    private string GetConnectionString()
+    {
+        IConfiguration configuration = new ConfigurationBuilder()
+            .SetBasePath(AppContext.BaseDirectory)
+            .AddJsonFile("appsettings.json", true, true).Build();
+        return configuration["ConnectionStrings:BookStoreDB"];
+    }
     protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
-#warning To protect potentially sensitive information in your connection string, you should move it out of source code. You can avoid scaffolding the connection string by using the Name= syntax to read it from configuration - see https://go.microsoft.com/fwlink/?linkid=2131148. For more guidance on storing connection strings, see https://go.microsoft.com/fwlink/?LinkId=723263.
-        => optionsBuilder.UseSqlServer("Server=LAPTOP-4SH81D1E\\HAOMG;uid=sa;pwd=12345;database=BookStoreDB;TrustServerCertificate=True");
+    {
+        if (optionsBuilder.IsConfigured) return;
+        optionsBuilder.UseSqlServer(GetConnectionString());
+    }
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
@@ -145,6 +155,8 @@ public partial class BookStoreDbContext : DbContext
             entity.Property(e => e.PasswordHash).HasMaxLength(255);
             entity.Property(e => e.PhoneNumber).HasMaxLength(20);
             entity.Property(e => e.Role).HasMaxLength(20);
+            entity.Property(e => e.Address).HasColumnType("nvarchar(max)");
+            entity.Property(e => e.Bio).HasColumnType("nvarchar(max)");
         });
 
         OnModelCreatingPartial(modelBuilder);
