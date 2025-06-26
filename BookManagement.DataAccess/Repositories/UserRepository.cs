@@ -94,7 +94,7 @@ namespace BookManagement.DataAccess.Repositories
             }
         }
 
-        public async Task DeleteUserAsync(int id)
+        public async Task DeleteUserAsync(string id)
         {
             try
             {

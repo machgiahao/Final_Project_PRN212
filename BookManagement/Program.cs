@@ -1,3 +1,10 @@
+using BookManagement.DataAccess.IRepositories;
+using BookManagement.DataAccess.Repositories;
+using BookManagement.Services.IServices;
+using BookManagement.Services.Services;
+using BookManagement.Services.Mappings;
+using BookManagement.Mappings;
+
 namespace BookManagement
 {
     public class Program
@@ -16,6 +23,26 @@ namespace BookManagement
 
             // Add services to the container.
             builder.Services.AddRazorPages();
+            builder.Services.AddAutoMapper(
+                                typeof(MappingProfile),
+                                typeof(ViewModelMappingProfile));
+
+            // Register repositories
+            builder.Services.AddScoped<IUserRepository, UserRepository>();
+            builder.Services.AddScoped<ICartRepository, CartRepository>();
+            builder.Services.AddScoped<ICategoryRepository, CategoryRepository>();
+            builder.Services.AddScoped<IOrderDetailRepository, OrderDetailRepository>();
+            builder.Services.AddScoped<IOrderRepository, OrderRepository>();
+            builder.Services.AddScoped<IBookRepository, BookRepository>();
+
+            // Register services
+            builder.Services.AddScoped<IUserService, UserService>();
+            builder.Services.AddScoped<ICartService, CartService>();
+            builder.Services.AddScoped<ICategoryService, CategoryService>();
+            builder.Services.AddScoped<IOrderDetailService, OrderDetailService>();
+            builder.Services.AddScoped<IOrderService, OrderService>();
+            builder.Services.AddScoped<IBookService, BookService>();
+            
             builder.Services.AddSession();
 
             var app = builder.Build();

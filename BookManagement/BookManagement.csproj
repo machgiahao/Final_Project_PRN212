@@ -6,4 +6,16 @@
     <ImplicitUsings>enable</ImplicitUsings>
   </PropertyGroup>
 
+  <ItemGroup>
+    <ProjectReference Include="..\BookManagement.Services\BookManagement.Services.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Folder Include="Attributes\" />
+    <Folder Include="Pages\Book\" />
+    <Folder Include="Pages\Cart\" />
+    <Folder Include="Pages\Order\" />
+    <Folder Include="Pages\User\" />
+  </ItemGroup>
+
 </Project>
