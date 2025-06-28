@@ -9,18 +9,15 @@ namespace BookManagement.DataAccess.IRepositories
 {
     public interface IBookRepository
     {
-        // Create
         Task AddBookAsync(Book book);
 
-        // Read
         Task<Book?> GetBookByIdAsync(int id);
         Task<IEnumerable<Book>> GetAllBooksAsync();
 
-        // Update
         Task UpdateBookAsync(Book book);
 
-        // Delete
         Task DeleteBookAsync(int id);
+        Task<(IEnumerable<Book> Books, int TotalCount)> GetBooksPagedAsync(int pageNumber, int pageSize);
     }
 }
 

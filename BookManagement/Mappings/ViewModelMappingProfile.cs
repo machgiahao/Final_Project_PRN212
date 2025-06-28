@@ -1,6 +1,6 @@
 ﻿using AutoMapper;
 using BookManagement.Services.DTOs.Auth;
-using BookManagement.ViewModels;
+using BookManagement.ViewModels.Auth;
 
 namespace BookManagement.Mappings
 {
@@ -9,6 +9,7 @@ namespace BookManagement.Mappings
         public ViewModelMappingProfile()
         {
              CreateMap<LoginViewModel, LoginDto>();
+             CreateMap<RegisterViewModel, RegisterDto>();
         }   
     }
 }

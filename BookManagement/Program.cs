@@ -4,6 +4,9 @@ using BookManagement.Services.IServices;
 using BookManagement.Services.Services;
 using BookManagement.Services.Mappings;
 using BookManagement.Mappings;
+using Microsoft.AspNetCore.Authentication.Cookies;
+using BookManagement.DataAccess.Context;
+using Microsoft.EntityFrameworkCore;
 
 namespace BookManagement
 {
@@ -27,6 +30,10 @@ namespace BookManagement
                                 typeof(MappingProfile),
                                 typeof(ViewModelMappingProfile));
 
+            // Register DbContext with DI
+            builder.Services.AddDbContext<BookStoreDbContext>(options =>
+                options.UseSqlServer(builder.Configuration.GetConnectionString("BookStoreDB")));
+
             // Register repositories
             builder.Services.AddScoped<IUserRepository, UserRepository>();
             builder.Services.AddScoped<ICartRepository, CartRepository>();
@@ -42,7 +49,15 @@ namespace BookManagement
             builder.Services.AddScoped<IOrderDetailService, OrderDetailService>();
             builder.Services.AddScoped<IOrderService, OrderService>();
             builder.Services.AddScoped<IBookService, BookService>();
-            
+
+            //Configure Authorization
+            builder.Services.AddAuthentication(CookieAuthenticationDefaults.AuthenticationScheme)
+                .AddCookie(options =>
+                {
+                    options.LoginPath = "/Auth/Login";
+                    options.AccessDeniedPath = "/Auth/AccessDenied";
+                });
+            builder.Services.AddAuthorization();
             builder.Services.AddSession();
 
             var app = builder.Build();

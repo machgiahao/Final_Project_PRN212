@@ -74,6 +74,7 @@ namespace BookManagement.Services.Services
                 var user = _mapper.Map<User>(registerDto);
                 user.PasswordHash = HashPassword(registerDto.Password);
                 user.CreatedAt = DateTime.UtcNow;
+                user.Role = "customer";
                 await _userRepo.AddUserAsync(user);
                 return _mapper.Map<UserDto>(user);
             }

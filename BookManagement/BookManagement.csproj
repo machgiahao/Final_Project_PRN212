@@ -11,11 +11,11 @@
   </ItemGroup>
 
   <ItemGroup>
-    <Folder Include="Attributes\" />
     <Folder Include="Pages\Book\" />
     <Folder Include="Pages\Cart\" />
     <Folder Include="Pages\Order\" />
     <Folder Include="Pages\User\" />
+    <Folder Include="wwwroot\js\signalr\" />
   </ItemGroup>
 
 </Project>

@@ -3,8 +3,118 @@
 @{
     ViewData["Title"] = "Home page";
 }
+<link rel="stylesheet" href="~/css/book.css" />
+<div class="container-fluid mt-4">
+    <div class="row">
+        <!-- Sidebar Filter -->
+        <div class="col-md-3">
+            <div class="card filter-card">
+                <div class="card-header">
+                    <strong>Bộ lọc tìm kiếm</strong>
+                </div>
+                <div class="card-body">
+                    <h6>Danh mục sản phẩm</h6>
+                    <form>
+                        @if (Model.Categories != null && Model.Categories.Any())
+                        {
+                            foreach (var category in Model.Categories)
+                            {
+                                <div class="form-check">
+                                    <input class="form-check-input" type="checkbox" id="cat_@category.CategoryId" name="categories" value="@category.CategoryId" />
+                                    <label class="form-check-label" for="cat_@category.CategoryId">@category.Name</label>
+                                </div>
+                            }
+                        }
+                        else
+                        {
+                            <div class="text-muted">Không có danh mục.</div>
+                        }
+                        <hr />
+                        <h6>Khoảng giá</h6>
+                        <div class="input-group mb-2">
+                            <input type="number" class="form-control" placeholder="50,000" />
+                            <span class="input-group-text">-</span>
+                            <input type="number" class="form-control" placeholder="2,000,000" />
+                        </div>
+                        <button type="submit" class="btn btn-primary w-100">Áp dụng</button>
+                    </form>
 
-<div class="text-center">
-    <h1 class="display-4">Welcome</h1>
-    <p>Learn about <a href="https://learn.microsoft.com/aspnet/core">building Web apps with ASP.NET Core</a>.</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- Main Content -->
+        <div class="col-md-9">
+            <div class="card">
+                <div class="card-body">
+                    <!-- Tabs -->
+                    <ul class="nav nav-tabs mb-3">
+                        <li class="nav-item">
+                            <a class="nav-link active" href="#">Phổ biến</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" href="#">Giá Thấp Đến Cao</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" href="#">Giá Cao Đến Thấp</a>
+                        </li>
+                    </ul>
+                    <!-- Book Cards -->
+                    <div class="row row-cols-1 row-cols-sm-2 row-cols-md-3 row-cols-lg-5 g-3">
+                        @if (Model.Books != null && Model.Books.Any())
+                        {
+                            foreach (var book in Model.Books)
+                            {
+                                <div class="col d-flex">
+                                    <div class="card h-100 w-100 shadow-sm book-card" style="min-width: 160px; max-width: 180px;">
+                                        <img src="@(string.IsNullOrEmpty(book.ImageUrl) ? Url.Content("~/img/default.jpg") : Url.Content(book.ImageUrl))"
+                                             class="card-img-top"
+                                             alt="Book Cover"
+                                             style="object-fit:cover; height:130px;">
+                                        <div class="card-body p-2 d-flex flex-column">
+                                            <h6 class="card-title mb-1" style="min-height:2.2em; font-size:1em;">@book.Title</h6>
+                                            <p class="card-text mb-1" style="font-size:1em;">
+                                                <strong>@($"{book.Price?.ToString("N0") ?? "0"} ₫")</strong>
+                                            </p>
+                                            <div class="d-flex align-items-center justify-content-between" style="font-size:0.95em;">
+                                                <span class="text-warning">&#9733;&#9733;&#9733;&#9733;&#9733;</span>
+                                                <span class="sold ms-1 text-muted">Đã bán <b>@book.Sold</b></span>
+                                            </div>
+                                            <div class="mt-auto"></div>
+                                        </div>
+                                    </div>
+                                </div>
+                            }
+                        }
+                        else
+                        {
+                            <div class="col">
+                                <div class="alert alert-info w-100">Không có sách nào để hiển thị.</div>
+                            </div>
+                        }
+                    </div>
+
+                    @if (Model.Pagination.TotalPages > 1)
+                    {
+                        <nav aria-label="Page navigation">
+                            <ul class="pagination justify-content-center mt-4">
+                                <li class="page-item @(Model.Pagination.CurrentPage == 1 ? "disabled" : "")">
+                                    <a class="page-link" asp-page="./Index" asp-route-pageNumber="@(Model.Pagination.CurrentPage - 1)">Previous</a>
+                                </li>
+                                @for (int i = 1; i <= Model.Pagination.TotalPages; i++)
+                                {
+                                    <li class="page-item @(i == Model.Pagination.CurrentPage ? "active" : "")">
+                                        <a class="page-link" asp-page="./Index" asp-route-pageNumber="@i">@i</a>
+                                    </li>
+                                }
+                                <li class="page-item @(Model.Pagination.CurrentPage == Model.Pagination.TotalPages ? "disabled" : "")">
+                                    <a class="page-link" asp-page="./Index" asp-route-pageNumber="@(Model.Pagination.CurrentPage + 1)">Next</a>
+                                </li>
+                            </ul>
+                        </nav>
+                    }
+                </div>
+            </div>
+        </div>
+    </div>
 </div>

@@ -1,11 +1,12 @@
 ﻿using Microsoft.EntityFrameworkCore;
-using BookManagement.BusinessObjects.Context;
 using BookManagement.BusinessObjects.Entities;
 using BookManagement.DataAccess.IRepositories;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using BookManagement.DataAccess.Context;
+
 
 namespace BookManagement.DataAccess.Repositories
 {
@@ -66,7 +67,6 @@ namespace BookManagement.DataAccess.Repositories
             {
                 return await _context.Books
                     .Include(b => b.Category)
-                    .Include(b => b.Author)
                     .ToListAsync();
             }
             catch (Exception ex)
@@ -101,6 +101,19 @@ namespace BookManagement.DataAccess.Repositories
             {
                 throw new Exception("An unexpected error occurred while updating the book.", ex);
             }
+        }
+
+        public async Task<(IEnumerable<Book> Books, int TotalCount)> GetBooksPagedAsync(int pageNumber, int pageSize)
+        {
+            var query = _context.Books.Include(b => b.Category).AsQueryable();
+            int totalCount = await query.CountAsync();
+            var books = await query
+                .OrderByDescending(b => b.CreatedAt)
+                .Skip((pageNumber - 1) * pageSize)
+                .Take(pageSize)
+                .ToListAsync();
+
+            return (books, totalCount);
         }
     }
 }

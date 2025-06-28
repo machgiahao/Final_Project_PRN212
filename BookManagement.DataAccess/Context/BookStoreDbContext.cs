@@ -4,7 +4,7 @@ using BookManagement.BusinessObjects.Entities;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 
-namespace BookManagement.BusinessObjects.Context;
+namespace BookManagement.DataAccess.Context;
 
 public partial class BookStoreDbContext : DbContext
 {
@@ -28,6 +28,11 @@ public partial class BookStoreDbContext : DbContext
     public virtual DbSet<OrderDetail> OrderDetails { get; set; }
 
     public virtual DbSet<User> Users { get; set; }
+    protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
+    {
+        if (optionsBuilder.IsConfigured) return;
+        optionsBuilder.UseSqlServer(GetConnectionString());
+    }
 
     private string GetConnectionString()
     {
@@ -35,11 +40,6 @@ public partial class BookStoreDbContext : DbContext
             .SetBasePath(AppContext.BaseDirectory)
             .AddJsonFile("appsettings.json", true, true).Build();
         return configuration["ConnectionStrings:BookStoreDB"];
-    }
-    protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
-    {
-        if (optionsBuilder.IsConfigured) return;
-        optionsBuilder.UseSqlServer(GetConnectionString());
     }
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
@@ -57,6 +57,7 @@ public partial class BookStoreDbContext : DbContext
             entity.Property(e => e.CreatedBy)
                 .HasMaxLength(50)
                 .IsUnicode(false);
+            entity.Property(e => e.Description).HasColumnType("nvarchar(max)");
             entity.Property(e => e.ImageUrl).HasMaxLength(255);
             entity.Property(e => e.Price).HasColumnType("decimal(10, 2)");
             entity.Property(e => e.Title).HasMaxLength(200);
@@ -64,6 +65,12 @@ public partial class BookStoreDbContext : DbContext
             entity.Property(e => e.UpdatedBy)
                 .HasMaxLength(50)
                 .IsUnicode(false);
+            entity.Property(e => e.Stock)
+                    .HasDefaultValue(0)
+                    .IsRequired();
+            entity.Property(e => e.Sold)
+                .HasDefaultValue(0);
+
 
             entity.HasOne(d => d.Category).WithMany(p => p.Books)
                 .HasForeignKey(d => d.CategoryId)

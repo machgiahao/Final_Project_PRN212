@@ -1,6 +1,6 @@
 ﻿using System.ComponentModel.DataAnnotations;
 
-namespace BookManagement.ViewModels
+namespace BookManagement.ViewModels.Auth
 {
     public class LoginViewModel
     {
