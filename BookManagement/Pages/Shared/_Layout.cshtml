@@ -83,11 +83,22 @@
         .account-link:hover {
             color: #00bfff;
         }
+
+        .dropdown:hover .dropdown-menu {
+            display: block;
+            margin-top: 0;
+        }
+
+        .dropdown-menu {
+            margin-top: 0;
+            transition: none;
+        }
     </style>
 </head>
 @{
     var isAuthenticated = User.Identity?.IsAuthenticated ?? false;
     var displayName = User.FindFirst(ClaimTypes.Name)?.Value;
+    var role = User.FindFirst(ClaimTypes.Role)?.Value ?? "Guest";
 }
 <body>
     <header>
@@ -115,9 +126,24 @@
                     </a>
                     @if (isAuthenticated && !string.IsNullOrEmpty(displayName))
                     {
-                        <a href="/Profile" class="account-link">
-                            <i class="fa-solid fa-user"></i> @displayName
-                        </a>
+                        <div class="dropdown">
+                            <a class="account-link dropdown-toggle" href="#" id="accountDropdown" data-bs-toggle="dropdown" aria-expanded="false">
+                                <i class="fa-solid fa-user"></i> @displayName
+                            </a>
+                            <ul class="dropdown-menu" aria-labelledby="accountDropdown">
+                                @if (role == "Admin")
+                                {
+                                    <li><a class="dropdown-item" href="/Admin/Dashboard">Dashboard</a></li>
+                                    <li><a class="dropdown-item" href="/Admin/Users">Manage Account</a></li>
+                                }
+                                else
+                                {
+                                    <li><a class="dropdown-item" href="/Profile">Profile</a></li>
+                                }
+                                <li><a class="dropdown-item" href="/Orders/History">Order history</a></li>
+                                <li><a class="dropdown-item" href="/Auth/Logout">Logout</a></li>
+                            </ul>
+                        </div>
                     }
                     else
                     {
