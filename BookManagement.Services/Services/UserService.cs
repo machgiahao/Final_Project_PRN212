@@ -1,4 +1,5 @@
 ﻿using AutoMapper;
+using BCrypt.Net;
 using BookManagement.BusinessObjects.Entities;
 using BookManagement.DataAccess.IRepositories;
 using BookManagement.Services.DTOs.Auth;
@@ -30,7 +31,7 @@ namespace BookManagement.Services.Services
                 var user = await _userRepo.GetUserByEmailAsync(loginDto.Email);
                 if (user == null) return null;
 
-                if (user.PasswordHash == HashPassword(loginDto.Password))
+                if (BCrypt.Net.BCrypt.Verify(loginDto.Password, user.PasswordHash))
                     return _mapper.Map<UserDto>(user);
 
                 return null;
@@ -72,9 +73,10 @@ namespace BookManagement.Services.Services
             try
             {
                 var user = _mapper.Map<User>(registerDto);
-                user.PasswordHash = HashPassword(registerDto.Password);
+                user.UserId = Guid.NewGuid().ToString();
+                user.PasswordHash = BCrypt.Net.BCrypt.HashPassword(registerDto.Password);
                 user.CreatedAt = DateTime.UtcNow;
-                user.Role = "customer";
+                user.Role = "Customer";
                 await _userRepo.AddUserAsync(user);
                 return _mapper.Map<UserDto>(user);
             }
@@ -114,14 +116,6 @@ namespace BookManagement.Services.Services
             {
                 throw new InvalidOperationException($"Error deleting user '{id}': {ex.Message}", ex);
             }
-        }
-
-        private string HashPassword(string password)
-        {
-            using var sha256 = SHA256.Create();
-            var bytes = Encoding.UTF8.GetBytes(password);
-            var hash = sha256.ComputeHash(bytes);
-            return Convert.ToBase64String(hash);
         }
     }
 }

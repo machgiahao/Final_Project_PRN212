@@ -1,4 +1,5 @@
-﻿<!DOCTYPE html>
+﻿@using System.Security.Claims
+<!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="utf-8" />
@@ -7,25 +8,121 @@
     <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.min.css" />
     <link rel="stylesheet" href="~/css/site.css" asp-append-version="true" />
     <link rel="stylesheet" href="~/BookManagement.styles.css" asp-append-version="true" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" />
+    <style>
+        .navbar-custom {
+            background: #fff;
+            border-bottom: 1px solid #e3e6ef;
+            box-shadow: 0 2px 8px rgba(60,72,88,0.04);
+            padding-top: 0.5rem;
+            padding-bottom: 0.5rem;
+        }
+
+        .navbar-brand {
+            font-size: 1.3rem;
+            font-weight: 600;
+            color: #00bfff !important;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+            .navbar-brand i {
+                font-size: 1.5rem;
+            }
+
+        .search-bar {
+            flex: 1 1 0%;
+            max-width: 600px;
+            margin: 0 2rem;
+        }
+
+        .search-input-group {
+            border-radius: 8px;
+            box-shadow: 0 1px 2px rgba(60,72,88,0.04);
+            background: #f8fafc;
+        }
+
+        .search-input-group input {
+            border: none;
+            background: transparent;
+            font-size: 1rem;
+        }
+
+        .search-input-group input:focus {
+            box-shadow: none;
+            background: transparent;
+        }
+
+        .icon-btn {
+            background: none;
+            border: none;
+            color: #00bfff;
+            font-size: 1.3rem;
+            position: relative;
+        }
+
+        .cart-badge {
+            position: absolute;
+            top: -6px;
+            right: -8px;
+            background: #ff5a5f;
+            color: #fff;
+            font-size: 0.7rem;
+            border-radius: 50%;
+            padding: 2px 6px;
+        }
+
+        .account-link {
+            color: #888;
+            font-size: 1.05rem;
+            margin-left: 1.5rem;
+            text-decoration: none;
+        }
+
+        .account-link:hover {
+            color: #00bfff;
+        }
+    </style>
 </head>
+@{
+    var isAuthenticated = User.Identity?.IsAuthenticated ?? false;
+    var displayName = User.FindFirst(ClaimTypes.Name)?.Value;
+}
 <body>
     <header>
-        <nav class="navbar navbar-expand-sm navbar-toggleable-sm navbar-light bg-white border-bottom box-shadow mb-3">
-            <div class="container">
-                <a class="navbar-brand" asp-area="" asp-page="/Index">BookManagement</a>
-                <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target=".navbar-collapse" aria-controls="navbarSupportedContent"
-                        aria-expanded="false" aria-label="Toggle navigation">
-                    <span class="navbar-toggler-icon"></span>
-                </button>
-                <div class="navbar-collapse collapse d-sm-inline-flex justify-content-between">
-                    <ul class="navbar-nav flex-grow-1">
-                        <li class="nav-item">
-                            <a class="nav-link text-dark" asp-area="" asp-page="/Index">Home</a>
-                        </li>
-                        <li class="nav-item">
-                            <a class="nav-link text-dark" asp-area="" asp-page="/Privacy">Privacy</a>
-                        </li>
-                    </ul>
+        <nav class="navbar navbar-custom d-flex align-items-center justify-content-center">
+            <div class="container d-flex align-items-center justify-content-between">
+                <!-- Logo -->
+                <a class="navbar-brand" asp-area="" asp-page="/Index">
+                    <i class="fa-solid fa-book"></i>
+                    FBook
+                </a>
+                <!-- Search Bar -->
+                <form class="search-bar d-flex" method="get" action="/Index">
+                    <div class="input-group search-input-group w-100">
+                        <span class="input-group-text bg-transparent border-0">
+                            <i class="fa-solid fa-magnifying-glass"></i>
+                        </span>
+                        <input type="text" class="form-control shadow-none" name="q" placeholder="What are you looking for today?" />
+                    </div>
+                </form>
+                <!-- Cart and Account -->
+                <div class="d-flex align-items-center">
+                    <a href="/Cart" class="icon-btn position-relative me-3">
+                        <i class="fa-solid fa-cart-shopping"></i>
+                        <span class="cart-badge">1</span>
+                    </a>
+                    @if (isAuthenticated && !string.IsNullOrEmpty(displayName))
+                    {
+                        <a href="/Profile" class="account-link">
+                            <i class="fa-solid fa-user"></i> @displayName
+                        </a>
+                    }
+                    else
+                    {
+                        <a href="/Auth/Login" class="account-link">Account</a>
+                    }
                 </div>
             </div>
         </nav>

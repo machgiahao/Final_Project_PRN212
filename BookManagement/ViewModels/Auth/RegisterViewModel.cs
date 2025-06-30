@@ -5,8 +5,8 @@ namespace BookManagement.ViewModels.Auth
     public class RegisterViewModel
     {
         [Required]
-        [Display(Name = "Username")]
-        public string Username { get; set; }
+        [Display(Name = "FullName")]
+        public string FullName { get; set; }
 
         [Required]
         [EmailAddress]

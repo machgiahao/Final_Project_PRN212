@@ -1,4 +1,190 @@
 ﻿@page
 @model BookManagement.Pages.Auth.LoginModel
 @{
+    Layout = "_LayoutMinimal";
 }
+
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" />
+<style>
+    body {
+        background: #f8f8f8;
+    }
+
+    .auth-container {
+        max-width: 1100px;
+        margin: 48px auto;
+        background: #fff;
+        border-radius: 32px;
+        box-shadow: 0 8px 32px rgba(60,72,88,0.10);
+        display: flex;
+        min-height: 600px;
+        overflow: hidden;
+    }
+
+    .auth-image {
+        flex: 1 1 0;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        background: #fff;
+        padding: 40px 0 40px 40px;
+    }
+
+        .auth-image img {
+            max-width: 90%;
+            height: auto;
+            border-radius: 0;
+            box-shadow: none;
+        }
+
+    .auth-form-section {
+        flex: 1 1 0;
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        padding: 48px 48px 48px 24px;
+    }
+
+        .auth-form-section h2 {
+            font-size: 2.7rem;
+            font-weight: 700;
+            margin-bottom: 2.5rem;
+            color: #222;
+            text-shadow: 2px 2px 0 #ececec;
+        }
+
+    .form-group {
+        margin-bottom: 1.5rem;
+    }
+
+    .form-control {
+        border: none;
+        border-bottom: 2px solid #bbb;
+        border-radius: 0;
+        background: transparent;
+        font-size: 1.1rem;
+        padding-left: 2.2rem;
+        box-shadow: none;
+    }
+
+        .form-control:focus {
+            border-color: #1976d2;
+            background: transparent;
+            box-shadow: none;
+        }
+
+    .input-icon {
+        position: absolute;
+        left: 0.7rem;
+        top: 50%;
+        transform: translateY(-50%);
+        color: #888;
+        font-size: 1.1rem;
+    }
+
+    .remember-me {
+        margin-bottom: 2rem;
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+    }
+
+    .btn-login {
+        width: 100%;
+        background: #6ea8fe;
+        color: #fff;
+        font-weight: 600;
+        border: none;
+        border-radius: 8px;
+        padding: 0.75rem 0;
+        font-size: 1.1rem;
+        margin-bottom: 1.5rem;
+        transition: background 0.2s;
+    }
+
+        .btn-login:hover {
+            background: #1976d2;
+        }
+
+    .auth-links {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 1.5rem;
+    }
+
+    .auth-links a {
+        color: #222;
+        text-decoration: underline;
+        font-size: 1rem;
+    }
+
+    .social-login {
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+    }
+
+    .social-btn {
+        width: 38px;
+        height: 38px;
+        border-radius: 6px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        color: #fff;
+        font-size: 1.2rem;
+        border: none;
+        margin-right: 0.2rem;
+        transition: filter 0.2s;
+    }
+
+    .social-btn.facebook {
+        background: #1877f3;
+    }
+
+    .social-btn.twitter {
+        background: #1da1f2;
+    }
+
+    .social-btn.google {
+        background: #ea4335;
+    }
+
+    .social-btn:hover {
+        filter: brightness(0.9);
+    }
+</style>
+
+<div class="auth-container">
+    <div class="auth-image">
+        <img src="~/img/signin-image.jpg" alt="Sign in illustration" />
+    </div>
+    <div class="auth-form-section">
+        <h2>Sign in</h2>
+        @if (!string.IsNullOrEmpty(Model.ErrorMessage))
+        {
+            <div class="alert alert-danger" role="alert">
+                @Model.ErrorMessage
+            </div>
+        }
+        <form method="post">
+            <div class="form-group position-relative">
+                <span class="input-icon"><i class="fa-regular fa-user"></i></span>
+                <input asp-for="LoginViewModel.Email" class="form-control" placeholder="Email" autocomplete="email" />
+            </div>
+            <div class="form-group position-relative">
+                <span class="input-icon"><i class="fa-solid fa-lock"></i></span>
+                <input asp-for="LoginViewModel.Password" class="form-control" placeholder="Password" type="password" autocomplete="current-password" />
+            </div>
+            <button type="submit" class="btn btn-login">Log in</button>
+        </form>
+        <div class="auth-links">
+            <a asp-page="/Auth/Register">Create an account</a>
+            <span>Or login with</span>
+            <div class="social-login">
+                <button class="social-btn google" type="button" title="Login with Google"><i class="fab fa-google"></i></button>
+            </div>
+        </div>
+    </div>
+</div>

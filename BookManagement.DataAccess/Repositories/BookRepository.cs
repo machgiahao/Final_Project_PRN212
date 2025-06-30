@@ -6,6 +6,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using BookManagement.DataAccess.Context;
+using BookManagement.BusinessObjects.Commons;
 
 
 namespace BookManagement.DataAccess.Repositories
@@ -103,9 +104,24 @@ namespace BookManagement.DataAccess.Repositories
             }
         }
 
-        public async Task<(IEnumerable<Book> Books, int TotalCount)> GetBooksPagedAsync(int pageNumber, int pageSize)
+        public async Task<PagedResult<Book>> GetBooksPagedAsync(int pageNumber, int pageSize, List<int> categoryIds = null, decimal? minPrice = null, decimal? maxPrice = null)
         {
             var query = _context.Books.Include(b => b.Category).AsQueryable();
+
+            // Filter by category if provided
+            if (categoryIds != null && categoryIds.Any())
+            {
+                query = query.Where(b => b.CategoryId.HasValue && categoryIds.Contains(b.CategoryId.Value));
+            }
+            if(minPrice.HasValue)
+            {
+                query = query.Where(b => b.Price >= minPrice.Value);
+            }
+            if (maxPrice.HasValue)
+            {
+                query = query.Where(b => b.Price <= maxPrice.Value);
+            }
+
             int totalCount = await query.CountAsync();
             var books = await query
                 .OrderByDescending(b => b.CreatedAt)
@@ -113,7 +129,13 @@ namespace BookManagement.DataAccess.Repositories
                 .Take(pageSize)
                 .ToListAsync();
 
-            return (books, totalCount);
+            return new PagedResult<Book>
+            {
+                Items = books,
+                TotalCount = totalCount,
+                PageNumber = pageNumber,
+                PageSize = pageSize
+            };
         }
     }
 }

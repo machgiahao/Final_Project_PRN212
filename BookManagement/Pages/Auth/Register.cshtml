@@ -1,31 +1,193 @@
 ﻿@page
 @model BookManagement.Pages.Auth.RegisterModel
 @{
+    Layout = "_LayoutMinimal";
 }
 
-<h2>Register</h2>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" />
+<style>
+    body {
+        background: #f8f8f8;
+    }
 
-<form method="post">
-    <div asp-validation-summary="All"></div>
-    <div>
-        <label asp-for="RegisterViewModel.Username"></label>
-        <input asp-for="RegisterViewModel.Username" />
-        <span asp-validation-for="RegisterViewModel.Username"></span>
+    .register-container {
+        max-width: 1100px;
+        margin: 48px auto;
+        background: #fff;
+        border-radius: 32px;
+        box-shadow: 0 8px 32px rgba(60,72,88,0.10);
+        display: flex;
+        min-height: 600px;
+        overflow: hidden;
+        align-items: center;
+        position: relative;
+    }
+
+    .register-form-section {
+        flex: 1 1 0;
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        align-items: flex-start;
+        padding-left: 60px; /* Adjust this for left space */
+        padding-right: 40px;
+        min-width: 420px;
+        max-width: 600px;
+        height: 100%;
+    }
+
+    .register-form-inner {
+        width: 100%;
+        max-width: 420px; /* Prevents the form from stretching too wide */
+        margin-left: auto;
+        margin-right: auto;
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+    }
+    .register-form-section h2 {
+        font-size: 2.8rem;
+        font-weight: 800;
+        margin-bottom: 2.5rem;
+        color: #222;
+        text-shadow: 2px 2px 0 #ececec;
+    }
+
+    .form-group {
+        margin-bottom: 1.5rem;
+    }
+
+    .form-control {
+        border: none;
+        border-bottom: 2px solid #bbb;
+        border-radius: 0;
+        background: transparent;
+        font-size: 1.1rem;
+        padding-left: 2.2rem;
+        box-shadow: none;
+    }
+
+        .form-control:focus {
+            border-color: #1976d2;
+            background: transparent;
+            box-shadow: none;
+        }
+
+    .input-icon {
+        position: absolute;
+        left: 0.7rem;
+        top: 50%;
+        transform: translateY(-50%);
+        color: #888;
+        font-size: 1.1rem;
+    }
+
+    .terms {
+        margin-bottom: 2.2rem;
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+        font-size: 1rem;
+    }
+
+    .btn-register {
+        width: 180px;
+        background: #6ea8fe;
+        color: #fff;
+        font-weight: 600;
+        border: none;
+        border-radius: 8px;
+        padding: 0.75rem 0;
+        font-size: 1.1rem;
+        margin-bottom: 1.5rem;
+        transition: background 0.2s;
+    }
+
+        .btn-register:hover {
+            background: #1976d2;
+        }
+
+    .already-member {
+        position: absolute;
+        right: 60px;
+        bottom: 40px;
+        font-size: 1.1rem;
+    }
+
+        .already-member a {
+            color: #222;
+            text-decoration: underline;
+            font-size: 1.1rem;
+        }
+
+    .register-image {
+        flex: 1 1 0;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        background: #fff;
+        padding: 40px 40px 40px 0;
+        min-width: 350px;
+    }
+
+        .register-image img {
+            max-width: 90%;
+            height: auto;
+            border-radius: 0;
+            box-shadow: none;
+        }
+
+    .register-form-section, .register-image {
+        padding: 18px;
+    }
+
+        .register-form-section h2 {
+            font-size: 2rem;
+        }
+
+    }
+</style>
+
+<div class="register-container">
+    <div class="register-form-section">
+        <div class="register-form-inner">
+            <h2>Sign up</h2>
+            <form method="post">
+                <div asp-validation-summary="ModelOnly" class="text-danger mb-3"></div>
+                <div class="form-group position-relative">
+                    <span class="input-icon"><i class="fa-regular fa-user"></i></span>
+                    <input asp-for="RegisterViewModel.FullName" class="form-control" placeholder="Your Name" autocomplete="username" />
+                    <span asp-validation-for="RegisterViewModel.FullName" class="text-danger"></span>
+                </div>
+                <div class="form-group position-relative">
+                    <span class="input-icon"><i class="fa-regular fa-envelope"></i></span>
+                    <input asp-for="RegisterViewModel.Email" class="form-control" placeholder="Your Email" autocomplete="email" />
+                    <span asp-validation-for="RegisterViewModel.Email" class="text-danger"></span>
+                </div>
+                <div class="form-group position-relative">
+                    <span class="input-icon"><i class="fa-solid fa-lock"></i></span>
+                    <input asp-for="RegisterViewModel.Password" class="form-control" placeholder="Password" type="password" autocomplete="new-password" />
+                    <span asp-validation-for="RegisterViewModel.Password" class="text-danger"></span>
+                </div>
+                <div class="form-group position-relative">
+                    <span class="input-icon"><i class="fa-solid fa-lock"></i></span>
+                    <input asp-for="RegisterViewModel.ConfirmPassword" class="form-control" placeholder="Repeat your password" type="password" autocomplete="new-password" />
+                    <span asp-validation-for="RegisterViewModel.ConfirmPassword" class="text-danger"></span>
+                </div>
+                <div class="terms">
+                    <input type="checkbox" id="terms" required />
+                    <label for="terms" class="mb-0">
+                        I agree all statements in <a href="#" target="_blank">Terms of service</a>
+                    </label>
+                </div>
+                <button type="submit" class="btn btn-register">Register</button>
+            </form>
+        </div>
+        <div class="already-member">
+            <a asp-page="/Auth/Login">I am already member</a>
+        </div>
     </div>
-    <div>
-        <label asp-for="RegisterViewModel.Email"></label>
-        <input asp-for="RegisterViewModel.Email" />
-        <span asp-validation-for="RegisterViewModel.Email"></span>
+    <div class="register-image">
+        <img src="~/img/signup-image.jpg" alt="Sign up illustration" />
     </div>
-    <div>
-        <label asp-for="RegisterViewModel.Password"></label>
-        <input asp-for="RegisterViewModel.Password" type="password" />
-        <span asp-validation-for="RegisterViewModel.Password"></span>
-    </div>
-    <div>
-        <label asp-for="RegisterViewModel.ConfirmPassword"></label>
-        <input asp-for="RegisterViewModel.ConfirmPassword" type="password" />
-        <span asp-validation-for="RegisterViewModel.ConfirmPassword"></span>
-    </div>
-    <button type="submit">Register</button>
-</form>
+</div>

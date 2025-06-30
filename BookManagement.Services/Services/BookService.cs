@@ -1,4 +1,5 @@
-﻿using BookManagement.BusinessObjects.Entities;
+﻿using BookManagement.BusinessObjects.Commons;
+using BookManagement.BusinessObjects.Entities;
 using BookManagement.DataAccess.IRepositories;
 using BookManagement.Services.IServices;
 using System;
@@ -80,11 +81,11 @@ namespace BookManagement.Services.Services
                 throw new Exception("Error deleting book.", ex);
             }
         }
-        public async Task<(IEnumerable<Book> Books, int TotalCount)> GetBooksPagedAsync(int pageNumber, int pageSize)
+        public async Task<PagedResult<Book>> GetBooksPagedAsync(int pageNumber, int pageSize, List<int> categoryIds = null, decimal? minPrice = null, decimal? maxPrice = null)
         {
             try
             {
-                return await _bookRepository.GetBooksPagedAsync(pageNumber, pageSize);
+                return await _bookRepository.GetBooksPagedAsync(pageNumber, pageSize, categoryIds, minPrice, maxPrice);
 
             }
             catch (Exception ex)
