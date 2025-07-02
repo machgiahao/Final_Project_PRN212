@@ -1,0 +1,18 @@
+﻿.admin-layout-root {
+    display: flex;
+    min-height: 100vh;
+    background: #f6f8fb;
+}
+
+.admin-main-content {
+    flex: 1;
+    padding: 32px 40px 32px 40px;
+    background: #f6f8fb;
+    min-width: 0;
+}
+
+.admin-title {
+    font-size: 1.2rem;
+    font-weight: 600;
+    color: #1976d2;
+}

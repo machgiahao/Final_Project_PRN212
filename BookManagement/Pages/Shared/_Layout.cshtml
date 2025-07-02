@@ -9,91 +9,9 @@
     <link rel="stylesheet" href="~/css/site.css" asp-append-version="true" />
     <link rel="stylesheet" href="~/BookManagement.styles.css" asp-append-version="true" />
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" />
-    <style>
-        .navbar-custom {
-            background: #fff;
-            border-bottom: 1px solid #e3e6ef;
-            box-shadow: 0 2px 8px rgba(60,72,88,0.04);
-            padding-top: 0.5rem;
-            padding-bottom: 0.5rem;
-        }
+    <link rel="stylesheet" href="~/css/layout.css" />
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.css">
 
-        .navbar-brand {
-            font-size: 1.3rem;
-            font-weight: 600;
-            color: #00bfff !important;
-            display: flex;
-            align-items: center;
-            gap: 0.5rem;
-        }
-
-            .navbar-brand i {
-                font-size: 1.5rem;
-            }
-
-        .search-bar {
-            flex: 1 1 0%;
-            max-width: 600px;
-            margin: 0 2rem;
-        }
-
-        .search-input-group {
-            border-radius: 8px;
-            box-shadow: 0 1px 2px rgba(60,72,88,0.04);
-            background: #f8fafc;
-        }
-
-        .search-input-group input {
-            border: none;
-            background: transparent;
-            font-size: 1rem;
-        }
-
-        .search-input-group input:focus {
-            box-shadow: none;
-            background: transparent;
-        }
-
-        .icon-btn {
-            background: none;
-            border: none;
-            color: #00bfff;
-            font-size: 1.3rem;
-            position: relative;
-        }
-
-        .cart-badge {
-            position: absolute;
-            top: -6px;
-            right: -8px;
-            background: #ff5a5f;
-            color: #fff;
-            font-size: 0.7rem;
-            border-radius: 50%;
-            padding: 2px 6px;
-        }
-
-        .account-link {
-            color: #888;
-            font-size: 1.05rem;
-            margin-left: 1.5rem;
-            text-decoration: none;
-        }
-
-        .account-link:hover {
-            color: #00bfff;
-        }
-
-        .dropdown:hover .dropdown-menu {
-            display: block;
-            margin-top: 0;
-        }
-
-        .dropdown-menu {
-            margin-top: 0;
-            transition: none;
-        }
-    </style>
 </head>
 @{
     var isAuthenticated = User.Identity?.IsAuthenticated ?? false;
@@ -134,7 +52,7 @@
                                 @if (role == "Admin")
                                 {
                                     <li><a class="dropdown-item" href="/Admin/Dashboard">Dashboard</a></li>
-                                    <li><a class="dropdown-item" href="/Admin/Users">Manage Account</a></li>
+                                    <li><a class="dropdown-item" href="/User/Index">Manage Account</a></li>
                                 }
                                 else
                                 {

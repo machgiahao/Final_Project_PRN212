@@ -1,5 +1,6 @@
 ﻿using AutoMapper;
 using BCrypt.Net;
+using BookManagement.BusinessObjects.Commons;
 using BookManagement.BusinessObjects.Entities;
 using BookManagement.DataAccess.IRepositories;
 using BookManagement.Services.DTOs.Auth;
@@ -55,12 +56,12 @@ namespace BookManagement.Services.Services
             }
         }
 
-        public async Task<IEnumerable<UserDto>> GetAllAsync()
+        public async Task<PagedResult<UserDto>> GetAllUsersAsync(int pageNumber, int pageSize, string? name, string? email, string? phone)
         {
             try
             {
-                var users = await _userRepo.GetAllUsersAsync();
-                return _mapper.Map<IEnumerable<UserDto>>(users);
+                var users = await _userRepo.GetAllUsersAsync(pageNumber, pageSize, name, email, phone);
+                return _mapper.Map<PagedResult<UserDto>>(users);
             }
             catch (Exception ex)
             {
@@ -83,6 +84,23 @@ namespace BookManagement.Services.Services
             catch (Exception ex)
             {
                 throw new InvalidOperationException($"Error registering user '{registerDto.Email}': {ex.Message}", ex);
+            }
+        }
+
+        public async Task<UserDto> CreateAsync(CreateUserDto userDto)
+        {
+            try
+            {
+                var user = _mapper.Map<User>(userDto);
+                user.UserId = Guid.NewGuid().ToString();
+                user.PasswordHash = BCrypt.Net.BCrypt.HashPassword(userDto.Password);
+                user.CreatedAt = DateTime.UtcNow;
+                await _userRepo.AddUserAsync(user);
+                return _mapper.Map<UserDto>(user);
+            }
+            catch (Exception ex)
+            {
+                throw new InvalidOperationException($"Error registering user '{userDto.Email}': {ex.Message}", ex);
             }
         }
 

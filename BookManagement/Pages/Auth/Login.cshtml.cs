@@ -32,30 +32,40 @@ namespace BookManagement.Pages.Auth
         {
             if (!ModelState.IsValid)
                 return Page();
-            var loginDto = _mapper.Map<LoginDto>(LoginViewModel);
-            var user = await _userService.LoginAsync(loginDto);
-            if (user == null)
+
+            try
             {
-                ErrorMessage = "Invalid email or password.";
-                return Page();
-            }
-            var claims = new List<Claim>
+                var loginDto = _mapper.Map<LoginDto>(LoginViewModel);
+                var user = await _userService.LoginAsync(loginDto);
+                if (user == null)
+                {
+                    ErrorMessage = "Invalid email or password.";
+                    return Page();
+                }
+                var claims = new List<Claim>
             {
                 new Claim(ClaimTypes.NameIdentifier, user.UserId),
                 new Claim(ClaimTypes.Name, user.FullName ?? ""),
                 new Claim(ClaimTypes.Role, user.Role ?? "")
             };
 
-            var identity = new ClaimsIdentity(claims, CookieAuthenticationDefaults.AuthenticationScheme);
-            var principal = new ClaimsPrincipal(identity);
+                var identity = new ClaimsIdentity(claims, CookieAuthenticationDefaults.AuthenticationScheme);
+                var principal = new ClaimsPrincipal(identity);
 
-            await HttpContext.SignInAsync(CookieAuthenticationDefaults.AuthenticationScheme, principal, new AuthenticationProperties
+                await HttpContext.SignInAsync(CookieAuthenticationDefaults.AuthenticationScheme, principal, new AuthenticationProperties
+                {
+                    IsPersistent = true,
+                    ExpiresUtc = DateTimeOffset.UtcNow.AddMinutes(20)
+                });
+                return RedirectToPage("/Index");
+            }
+            catch
             {
-                IsPersistent = true,
-                ExpiresUtc = DateTimeOffset.UtcNow.AddMinutes(20)
-            });
+                ErrorMessage = "Invalid email or password.";
+                return Page();
+            }
 
-            return RedirectToPage("/Index");
+
         }
     }
 }

@@ -6,6 +6,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using BookManagement.BusinessObjects.Commons;
 
 namespace BookManagement.DataAccess.Repositories
 {
@@ -61,11 +62,39 @@ namespace BookManagement.DataAccess.Repositories
             }
         }
 
-        public async Task<IEnumerable<User>> GetAllUsersAsync()
+        public async Task<PagedResult<User>> GetAllUsersAsync(int pageNumber, int pageSize, string? name, string? email, string? phone)
         {
             try
             {
-                return await _context.Users.ToListAsync();
+                var query = _context.Users.AsQueryable();
+
+                if(!string.IsNullOrEmpty(name))
+                {
+                    query = query.Where(u => u.FullName.Contains(name));
+                }
+                if (!string.IsNullOrEmpty(email))
+                {
+                    query = query.Where(u => u.Email.Contains(email));
+                }
+                if (!string.IsNullOrEmpty(phone))
+                {
+                    query = query.Where(u => u.PhoneNumber.Contains(phone));
+                }
+
+                var totalCount = await query.CountAsync();
+                var users = await query
+                    .OrderBy(u => u.FullName)
+                    .Skip((pageNumber - 1) * pageSize)
+                    .Take(pageSize)
+                    .ToListAsync();
+
+                return new PagedResult<User>
+                {
+                    Items = users,
+                    TotalCount = totalCount,
+                    PageNumber = pageNumber,
+                    PageSize = pageSize
+                };
             }
             catch (Exception ex)
             {

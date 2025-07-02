@@ -1,4 +1,5 @@
 ﻿using AutoMapper;
+using BookManagement.BusinessObjects.Commons;
 using BookManagement.BusinessObjects.Entities;
 using BookManagement.Services.DTOs.Auth;
 using BookManagement.Services.DTOs.User;
@@ -20,7 +21,9 @@ namespace BookManagement.Services.Mappings
 
             // User DTOs
             CreateMap<User, UserDto>().ReverseMap();
+            CreateMap<User, CreateUserDto>().ReverseMap();
             CreateMap<User, UserUpdateDto>().ReverseMap();
+            CreateMap(typeof(PagedResult<UserDto>), typeof(PagedResult<User>)).ReverseMap();
         }
     }
 }
