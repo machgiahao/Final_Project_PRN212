@@ -14,6 +14,9 @@ public partial class Order
     public int? Status { get; set; }
 
     public decimal TotalPrice { get; set; }
+    public string RecipientName { get; set; } = null!;
+    public string ShippingAddress { get; set; } = null!;
+    public string PhoneNumber { get; set; } = null!;
 
     public virtual ICollection<OrderDetail> OrderDetails { get; set; } = new List<OrderDetail>();
 

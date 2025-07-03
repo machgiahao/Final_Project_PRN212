@@ -82,7 +82,6 @@ namespace BookManagement.DataAccess.Repositories
             {
                 return await _context.Books
                     .Include(b => b.Category)
-                    .Include(b => b.Author)
                     .FirstOrDefaultAsync(b => b.BookId == id);
             }
             catch (Exception ex)

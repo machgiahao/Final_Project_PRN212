@@ -1,0 +1,283 @@
+﻿/* Modern Typography */
+.book-title {
+    font-size: 2rem;
+    font-weight: 700;
+    color: #333;
+    line-height: 1.2;
+    margin-bottom: 0.8rem;
+}
+
+/* Image Section Styling */
+.book-image-section {
+    background-color: #f8f9fa;
+    border-right: 1px solid rgba(0, 0, 0, 0.05);
+}
+
+.image-thumbs {
+    margin-top: 1rem;
+}
+
+.thumb-item {
+    width: 60px;
+    height: 60px;
+    border-radius: 8px;
+    overflow: hidden;
+    cursor: pointer;
+    border: 2px solid transparent;
+    transition: all 0.2s ease;
+}
+
+    .thumb-item.active {
+        border-color: #0d6efd;
+    }
+
+    .thumb-item img {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+    }
+
+/* Author and Category */
+.author-category {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    flex-wrap: wrap;
+}
+
+.author {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    color: #0d6efd;
+    font-weight: 500;
+}
+
+.category-tag {
+    background-color: rgba(13, 110, 253, 0.1);
+    color: #0d6efd;
+    font-size: 0.85rem;
+    font-weight: 500;
+    padding: 0.3rem 0.8rem;
+    border-radius: 2rem;
+}
+
+/* Rating and Sales */
+.rating-sales {
+    display: flex;
+    align-items: center;
+    gap: 1.5rem;
+}
+
+.stars {
+    color: #ffc107;
+    font-size: 1rem;
+}
+
+.sales {
+    color: #6c757d;
+    font-size: 0.9rem;
+    border-left: 1px solid #dee2e6;
+    padding-left: 1.5rem;
+}
+
+/* Price */
+.price {
+    font-size: 2.2rem;
+    font-weight: 700;
+    color: #dc3545;
+}
+
+/* Info Pills */
+.info-pills {
+    display: flex;
+    gap: 2rem;
+}
+
+.info-pill {
+    display: flex;
+    align-items: center;
+    gap: 0.8rem;
+}
+
+    .info-pill i {
+        font-size: 1.2rem;
+        color: #6c757d;
+    }
+
+    .info-pill div {
+        display: flex;
+        flex-direction: column;
+    }
+
+    .info-pill .label {
+        color: #6c757d;
+        font-size: 0.85rem;
+    }
+
+    .info-pill .value {
+        font-weight: 600;
+        color: #28a745;
+    }
+
+/* Description */
+.description h6 {
+    color: #495057;
+    font-weight: 600;
+    margin-bottom: 0.8rem;
+}
+
+.description-content {
+    background-color: #f8f9fa;
+    border-left: 3px solid #0d6efd;
+    padding: 1rem;
+    border-radius: 8px;
+    line-height: 1.6;
+    color: #495057;
+}
+
+/* Quantity Selector */
+.quantity-selector {
+    display: flex;
+    align-items: center;
+    gap: 1.5rem;
+}
+
+    .quantity-selector label {
+        font-weight: 500;
+        color: #495057;
+    }
+
+.quantity-control {
+    display: flex;
+    align-items: center;
+    border: 1px solid #ced4da;
+    border-radius: 8px;
+    overflow: hidden;
+}
+
+.qty-btn {
+    background: none;
+    border: none;
+    padding: 0.5rem 0.8rem;
+    cursor: pointer;
+    transition: background-color 0.2s ease;
+}
+
+    .qty-btn:hover {
+        background-color: #f1f3f5;
+    }
+
+#qtyInput {
+    width: 50px;
+    border: none;
+    text-align: center;
+    font-weight: 500;
+    background: none;
+    -moz-appearance: textfield;
+}
+
+    #qtyInput::-webkit-inner-spin-button,
+    #qtyInput::-webkit-outer-spin-button {
+        -webkit-appearance: none;
+        margin: 0;
+    }
+
+/* Action Buttons */
+.action-buttons {
+    display: flex;
+    gap: 1rem;
+}
+
+.btn-cart, .btn-buy {
+    padding: 0.75rem 1.5rem;
+    border-radius: 8px;
+    font-weight: 500;
+    display: inline-flex;
+    align-items: center;
+    border: none;
+    cursor: pointer;
+    transition: all 0.2s ease;
+}
+
+.btn-cart {
+    background-color: #0d6efd;
+    color: white;
+}
+
+.btn-buy {
+    background-color: #dc3545;
+    color: white;
+}
+
+.btn-cart:hover {
+    background-color: #0b5ed7;
+}
+
+.btn-buy:hover {
+    background-color: #c82333;
+}
+
+/* Modern Badges */
+.badge-modern {
+    display: inline-flex;
+    align-items: center;
+    padding: 0.4rem 0.8rem;
+    border-radius: 6px;
+    font-size: 0.85rem;
+    font-weight: 500;
+    box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+}
+
+    .badge-modern.warning {
+        background-color: #fff3cd;
+        color: #856404;
+    }
+
+    .badge-modern.danger {
+        background-color: #f8d7da;
+        color: #721c24;
+    }
+
+/* Favorite Button */
+.btn-icon {
+    width: 38px;
+    height: 38px;
+    border-radius: 50%;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    background: none;
+    border: 1px solid #dee2e6;
+    color: #6c757d;
+    cursor: pointer;
+    transition: all 0.2s ease;
+}
+
+    .btn-icon:hover {
+        background-color: rgba(13, 110, 253, 0.1);
+        color: #0d6efd;
+        border-color: #0d6efd;
+    }
+
+/* Responsive adjustments */
+@media (max-width: 767px) {
+    .book-image-section {
+        border-right: none;
+        border-bottom: 1px solid rgba(0, 0, 0, 0.05);
+    }
+
+    .book-title {
+        font-size: 1.5rem;
+    }
+
+    .price {
+        font-size: 1.8rem;
+    }
+
+    .info-pills {
+        flex-direction: column;
+        gap: 1rem;
+    }
+}
+

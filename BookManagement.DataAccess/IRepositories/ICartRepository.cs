@@ -12,5 +12,6 @@ namespace BookManagement.DataAccess.IRepositories
         Task UpdateCartItemAsync(CartItem cartItem);
         Task DeleteCartItemAsync(int cartItemId);
         Task ClearCartAsync(string userId);
+        public Task<int> GetCartCountAsync(string userId);
     }
 }

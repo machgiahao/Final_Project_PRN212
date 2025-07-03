@@ -40,7 +40,7 @@
                 <div class="d-flex align-items-center">
                     <a href="/Cart" class="icon-btn position-relative me-3">
                         <i class="fa-solid fa-cart-shopping"></i>
-                        <span class="cart-badge">1</span>
+                        @await Component.InvokeAsync("CartBadge")
                     </a>
                     @if (isAuthenticated && !string.IsNullOrEmpty(displayName))
                     {

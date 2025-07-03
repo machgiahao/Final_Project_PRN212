@@ -128,5 +128,17 @@ namespace BookManagement.DataAccess.Repositories
                 throw new Exception($"An unexpected error occurred while clearing the cart for user ID {userId}.", ex);
             }
         }
+
+        public Task<int> GetCartCountAsync(string userId)
+        {
+            try
+            {
+                return _context.CartItems.CountAsync(ci => ci.UserId == userId);
+            }
+            catch (Exception ex)
+            {
+                throw new Exception($"An error occurred while retrieving the cart count for user ID {userId}.", ex);
+            }
+        }
     }
 }

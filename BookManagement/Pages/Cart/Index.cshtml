@@ -1,0 +1,83 @@
+﻿@page
+@model BookManagement.Pages.Cart.IndexModel
+@{
+    var cartItems = Model.CartItems;
+    var subtotal = Model.Subtotal;
+    ViewData["CurrentStep"] = 2;
+}
+
+<div class="container my-4">
+    <!-- Breadcrumb -->
+    <nav aria-label="breadcrumb">
+        <ol class="breadcrumb bg-white px-3 py-2 rounded">
+            <li class="breadcrumb-item" style="text-decoration: none"><a href="/">Home</a></li>
+            <li class="breadcrumb-item active" aria-current="page">Cart</li>
+        </ol>
+    </nav>
+
+    <!-- Steps -->
+    @await Html.PartialAsync("_CheckoutSteps")
+
+    <div class="row">
+        <!-- Cart Items -->
+        <div class="col-md-8">
+            <div class="card mb-3">
+                <div class="card-body">
+                    @if (cartItems.Count == 0)
+                    {
+                        <div class="text-center text-muted">Your cart is empty.</div>
+                    }
+                    else
+                    {
+                        @foreach (var item in cartItems)
+                        {
+                            <div class="row align-items-center mb-3">
+                                <div class="col-2">
+                                    <img src="@item.BookImageUrl" class="img-fluid rounded" alt="@item.BookTitle" />
+                                </div>
+                                <div class="col-4">
+                                    <span>@item.BookTitle</span>
+                                </div>
+                                <div class="col-2">
+                                    <span>@item.Price.ToString("N0") đ</span>
+                                </div>
+                                <div class="col-2">
+                                    <input type="number" class="form-control" value="@item.Quantity" min="1" readonly />
+                                </div>
+                                <div class="col-2 d-flex align-items-center">
+                                    <span class="me-2">Total: @(item.Total.ToString("N0")) đ</span>
+                                    <form method="post" asp-page-handler="Remove" asp-route-id="@item.CartItemId">
+                                        <button type="submit" class="btn btn-link text-danger p-0" title="Remove">
+                                            <i class="fa fa-trash"></i>
+                                        </button>
+                                    </form>
+                                </div>
+                            </div>
+                        }
+                    }
+                </div>
+            </div>
+        </div>
+        <!-- Cart Summary -->
+        <div class="col-md-4">
+            <div class="card">
+                <div class="card-body">
+                    <div class="d-flex justify-content-between">
+                        <span>Subtotal</span>
+                        <span>@subtotal.ToString("N0") đ</span>
+                    </div>
+                    <hr />
+                    <div class="d-flex justify-content-between mb-3">
+                        <strong>Total</strong>
+                        <strong class="text-danger">@subtotal.ToString("N0") đ</strong>
+                    </div>
+                    <form method="post" asp-page-handler="Checkout">
+                        <button type="submit" class="btn btn-danger w-100" @(cartItems.Count == 0 ? "disabled" : "")>
+                            Purchase (@cartItems.Count)
+                        </button>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

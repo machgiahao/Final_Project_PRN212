@@ -159,11 +159,6 @@
     color: #222;
 }
 
-.book-card .card-text strong {
-    color: #1976d2;
-    font-size: 1.1em;
-}
-
 .book-card .rating {
     color: #ffc107;
     font-size: 1em;
@@ -202,4 +197,9 @@
 
 .btn-primary:hover {
     background: #125ea2;
+}
+
+.book-card .card-text strong {
+    color: #009688;
+    font-size: 1.1em;
 }

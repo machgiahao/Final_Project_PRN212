@@ -31,7 +31,7 @@
     }
 }
 
-<link rel="stylesheet" href="~/css/book.css" />
+<link rel="stylesheet" href="~/css/Book/book.css" />
 <div class="container-fluid mt-4">
     <div class="row">
         <!-- Sidebar Filter -->
@@ -81,25 +81,27 @@
                         {
                             foreach (var book in Model.Books)
                             {
-                                <div class="col d-flex">
-                                    <div class="card h-100 w-100 shadow-sm book-card" style="min-width: 160px; max-width: 180px;">
-                                        <img src="@(string.IsNullOrEmpty(book.ImageUrl) ? Url.Content("~/img/default.jpg") : Url.Content(book.ImageUrl))"
-                                             class="card-img-top"
-                                             alt="Book Cover"
-                                             style="object-fit:cover; height:130px;">
-                                        <div class="card-body p-2 d-flex flex-column">
-                                            <h6 class="card-title mb-1" style="min-height:2.2em; font-size:1em;">@book.Title</h6>
-                                            <p class="card-text mb-1" style="font-size:1em;">
-                                                <strong>@($"{book.Price?.ToString("N0") ?? "0"} ₫")</strong>
-                                            </p>
-                                            <div class="d-flex align-items-center justify-content-between mt-1">
-                                                <span class="rating">&#9733;&#9733;&#9733;&#9733;&#9733;</span>
-                                                <span class="sold ms-1">Sold <b>@book.Sold</b></span>
+                                <a asp-page="/Book/Detail" asp-route-id="@book.BookId" style="text-decoration: none">
+                                    <div class="col d-flex">
+                                        <div class="card h-100 w-100 shadow-sm book-card" style="min-width: 160px; max-width: 180px;">
+                                            <img src="@(string.IsNullOrEmpty(book.ImageUrl) ? Url.Content("~/img/default.jpg") : Url.Content(book.ImageUrl))"
+                                                 class="card-img-top"
+                                                 alt="Book Cover"
+                                                 style="object-fit:cover; height:130px;">
+                                            <div class="card-body p-2 d-flex flex-column">
+                                                <h6 class="card-title mb-1" style="min-height:2.2em; font-size:1em;">@book.Title</h6>
+                                                <p class="card-text mb-1" style="font-size:1em;">
+                                                    <strong>@($"{book.Price?.ToString("N0") ?? "0"} ₫")</strong>
+                                                </p>
+                                                <div class="d-flex align-items-center justify-content-between mt-1">
+                                                    <span class="rating">&#9733;&#9733;&#9733;&#9733;&#9733;</span>
+                                                    <span class="sold ms-1">Sold <b>@book.Sold</b></span>
+                                                </div>
+                                                <div class="mt-auto"></div>
                                             </div>
-                                            <div class="mt-auto"></div>
                                         </div>
                                     </div>
-                                </div>
+                                </a>
                             }
                         }
                         else

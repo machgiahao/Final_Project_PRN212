@@ -11,9 +11,6 @@
   </ItemGroup>
 
   <ItemGroup>
-    <Folder Include="Pages\Book\" />
-    <Folder Include="Pages\Cart\" />
-    <Folder Include="Pages\Order\" />
     <Folder Include="wwwroot\js\signalr\" />
   </ItemGroup>
 
