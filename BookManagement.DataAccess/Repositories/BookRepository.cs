@@ -68,6 +68,7 @@ namespace BookManagement.DataAccess.Repositories
             {
                 return await _context.Books
                     .Include(b => b.Category)
+                    .OrderByDescending(b => b.CreatedAt)
                     .ToListAsync();
             }
             catch (Exception ex)

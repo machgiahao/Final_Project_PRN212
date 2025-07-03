@@ -18,6 +18,7 @@ namespace BookManagement.Services.Services
         }
         public async Task AddCartItemAsync(CartItem cartItem)
         {
+            cartItem.CreatedAt = DateTime.UtcNow;
             await _cartRepository.AddCartItemAsync(cartItem);
         }
         public async Task<CartItem?> GetCartItemByIdAsync(int cartItemId)

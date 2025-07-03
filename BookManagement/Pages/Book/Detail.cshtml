@@ -11,6 +11,15 @@
 <link rel="stylesheet" href="~/css/Book/detail.css" />
 
 <div class="container py-4">
+    @if (TempData["SuccessMessage"] != null)
+    {
+        <div class="alert alert-success alert-dismissible fade show mt-3" role="alert">
+            <i class="bi bi-check-circle-fill me-2"></i>
+            @TempData["SuccessMessage"]
+            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+        </div>
+    }
+
     <!-- Breadcrumb -->
     <nav aria-label="breadcrumb" class="mb-4">
         <ol class="breadcrumb">
@@ -62,9 +71,6 @@
                             <div class="col-md-7 p-4 p-lg-4 book-info-section">
                                 <div class="d-flex justify-content-between align-items-start">
                                     <h1 class="book-title">@book.Title</h1>
-                                    <button class="btn btn-icon" title="Add to favorites">
-                                        <i class="bi bi-heart"></i>
-                                    </button>
                                 </div>
 
                                 <div class="author-category mb-3">
@@ -116,6 +122,8 @@
                                 </div>
 
                                 <form method="post">
+                                    <input type="hidden" name="id" value="@Model.Book.BookId" />
+
                                     <div class="quantity-selector mb-4">
                                         <label for="qtyInput">Quantity</label>
                                         <div class="quantity-control">
@@ -173,4 +181,20 @@
             }
         });
     }
+
+        // Auto-dismiss success alert after 3 seconds
+    document.addEventListener('DOMContentLoaded', function () {
+        const alert = document.querySelector('.alert-success');
+        if (alert) {
+            setTimeout(() => {
+                // Bootstrap 5: use the built-in dismiss method if available
+                if (typeof bootstrap !== 'undefined') {
+                    const bsAlert = bootstrap.Alert.getOrCreateInstance(alert);
+                    bsAlert.close();
+                } else {
+                    alert.classList.remove('show');
+                }
+            }, 3000);
+        }
+    });
 </script>

@@ -12,7 +12,7 @@ public partial class CartItem
     public int? BookId { get; set; }
 
     public int Quantity { get; set; }
-
+    public DateTime? CreatedAt { get; set; }
     public virtual Book? Book { get; set; }
 
     public virtual User? User { get; set; }

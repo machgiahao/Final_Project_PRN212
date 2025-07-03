@@ -56,6 +56,7 @@ namespace BookManagement.DataAccess.Repositories
             try
             {
                 return await _context.Orders
+                    .OrderByDescending(o => o.OrderDate)
                     .Include(o => o.User)
                     .Include(o => o.OrderDetails)
                         .ThenInclude(od => od.Book)

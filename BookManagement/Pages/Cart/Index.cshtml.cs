@@ -26,5 +26,17 @@ namespace BookManagement.Pages.Cart
             var items = await _cartService.GetCartItemsByUserIdAsync(userId);
             CartItems = _mapper.Map<List<CartItemViewModel>>(items);
         }
+
+        public async Task<IActionResult> OnPostRemoveItemAsync(int cartItemId)
+        {
+            var userId = User.FindFirstValue(System.Security.Claims.ClaimTypes.NameIdentifier) ?? "";
+            var item = await _cartService.GetCartItemByIdAsync(cartItemId);
+            if (item == null || item.UserId != userId)
+            {
+                return NotFound();
+            }
+            await _cartService.DeleteCartItemAsync(cartItemId);
+            return RedirectToPage();
+        }
     }
 }

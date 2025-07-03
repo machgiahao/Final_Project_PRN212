@@ -42,6 +42,7 @@ namespace BookManagement.DataAccess.Repositories
                 return await _context.CartItems
                     .Include(ci => ci.Book)
                     .Include(ci => ci.User)
+                    .OrderByDescending(ci => ci.CreatedAt)
                     .FirstOrDefaultAsync(ci => ci.CartItemId == cartItemId);
             }
             catch (Exception ex)
@@ -57,6 +58,7 @@ namespace BookManagement.DataAccess.Repositories
                 return await _context.CartItems
                     .Include(ci => ci.Book)
                     .Where(ci => ci.UserId == userId)
+                    .OrderByDescending(ci => ci.CreatedAt)
                     .ToListAsync();
             }
             catch (Exception ex)
