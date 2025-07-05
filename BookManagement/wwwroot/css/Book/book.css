@@ -22,11 +22,6 @@
     min-height: 2.7em;
 }
 
-.book-card .card-text strong {
-    color: #1976d2;
-    font-size: 1.1em;
-}
-
 .book-card .rating {
     font-size: 1em;
     color: #ffc107;
@@ -200,6 +195,6 @@
 }
 
 .book-card .card-text strong {
-    color: #009688;
+    color: red !important;
     font-size: 1.1em;
 }

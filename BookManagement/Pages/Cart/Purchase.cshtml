@@ -1,0 +1,142 @@
+﻿@page
+@model BookManagement.Pages.Cart.PurchaseModel
+@{
+    var items = Model.SelectedItems;
+    ViewData["CurrentStep"] = 3;
+}
+
+<div class="container my-4">
+    <!-- Breadcrumb -->
+    <nav aria-label="breadcrumb" class="mb-4">
+        <ol class="breadcrumb">
+            <li class="breadcrumb-item"><a href="/" class="text-decoration-none text-primary">Home</a></li>
+            <li class="breadcrumb-item"><a href="/Cart/Index" class="text-decoration-none text-primary">Cart</a></li>
+        </ol>
+    </nav>
+    <!-- Steps -->
+    @await Html.PartialAsync("_CheckoutSteps")
+    <div class="row">
+        <!-- Product List (left column) -->
+        <div class="col-md-8">
+            @foreach (var item in items)
+            {
+                <div class="purchase-card" data-cartitemid="@item.CartItemId">
+                    <div class="row align-items-center">
+                        <div class="col-auto">
+                            <img src="@item.BookImageUrl" alt="@item.BookTitle" style="width:70px;height:90px;object-fit:cover;" />
+                        </div>
+                        <div class="col">
+                            <div class="fw-semibold">@item.BookTitle</div>
+                        </div>
+                        <div class="col-auto text-nowrap" style="min-width:110px;">
+                            @item.Price.ToString("N0") đ
+                        </div>
+                        <div class="col-auto text-nowrap" style="min-width:90px;">
+                            Quantity: @item.Quantity
+                        </div>
+                        <div class="col-auto text-nowrap fw-semibold" style="min-width:130px;">
+                            Total: <span class="text-danger bold">@item.Total.ToString("N0") đ</span>
+                        </div>
+                        <div class="col-auto">
+                            <button type="button" class="btn btn-link text-pink p-0 btn-remove-item" title="Delete" style="font-size:1.2rem;" data-cartitemid="@item.CartItemId">
+                                <i class="fa fa-trash"></i>
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            }
+        </div>
+
+        <!-- Order Form (right column) -->
+        <div class="col-md-4">
+            <form id="orderForm" method="post" asp-page-handler="ConfirmPurchase">
+                <div id="hiddenInputs">
+                    @foreach (var item in items)
+                    {
+                        <input type="hidden" name="SelectedCartItemIds" value="@item.CartItemId" data-cartitemid="@item.CartItemId" data-total="@item.Total" />
+                    }
+                </div>
+                <div class="card p-3">
+                    <div class="mb-2">
+                        <label class="form-label">Recipient's Name</label>
+                        <input class="form-control" name="RecipientName" value="" required />
+                    </div>
+                    <div class="mb-2">
+                        <label class="form-label">Phone Number</label>
+                        <input class="form-control" name="PhoneNumber" value="" required />
+                    </div>
+                    <div class="mb-2">
+                        <label class="form-label">Address</label>
+                        <textarea class="form-control" name="Address" required></textarea>
+                    </div>
+                    <div class="mb-2">
+                        <div>
+                            <input type="radio" name="PaymentMethod" checked /> Cash on Delivery
+                        </div>
+                    </div>
+                    <hr />
+                    <div class="d-flex justify-content-between">
+                        <span>Total</span>
+                        <span class="text-danger fw-bold" id="orderTotal" style="font-size:1.3rem"></span>
+                    </div>
+                    <button type="submit" class="btn btn-danger w-100 mt-3" id="orderBtn">
+                        Place an Order (<span id="orderCount"></span>)
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <script>
+        function updateTotalAndCount() {
+            let total = 0;
+            let count = 0;
+            document.querySelectorAll('input[name="SelectedCartItemIds"]').forEach(function(input) {
+                total += parseInt(input.getAttribute('data-total')) || 0;
+                count++;
+            });
+            document.getElementById('orderTotal').innerText = total.toLocaleString() + ' đ';
+            document.getElementById('orderCount').innerText = count;
+            document.getElementById('orderBtn').disabled = count === 0;
+        }
+
+        document.querySelectorAll('.btn-remove-item').forEach(function(btn) {
+            btn.addEventListener('click', function() {
+                var cartItemId = btn.getAttribute('data-cartitemid');
+                // Remove card from UI
+                var card = document.querySelector('.purchase-card[data-cartitemid="' + cartItemId + '"]');
+                if (card) card.remove();
+                // Remove hidden input from form
+                var input = document.querySelector('input[name="SelectedCartItemIds"][data-cartitemid="' + cartItemId + '"]');
+                if (input) input.remove();
+                // Update total and count
+                updateTotalAndCount();
+            });
+        });
+
+        // Initial update on page load
+        updateTotalAndCount();
+    </script>
+}
+
+<style>
+    .text-pink {
+        color: #ff69b4 !important;
+    }
+
+    .purchase-card {
+        background: #fff;
+        border-radius: 16px;
+        box-shadow: 0 4px 24px rgba(0,0,0,0.08), 0 1.5px 4px rgba(0,0,0,0.04);
+        border: 1.5px solid #f2f2f2;
+        padding: 24px 32px;
+        margin-bottom: 32px;
+        transition: box-shadow 0.2s;
+    }
+
+        .purchase-card:hover {
+            box-shadow: 0 8px 32px rgba(0,0,0,0.12), 0 2px 8px rgba(0,0,0,0.06);
+        }
+</style>

@@ -37,6 +37,10 @@ namespace BookManagement.Services.Services
         {
             await _cartRepository.DeleteCartItemAsync(cartItemId);
         }
+        public async Task RemoveCartItemsAsync(string userId, List<int> cartItemIds)
+        {
+            await _cartRepository.RemoveCartItemsAsync(userId, cartItemIds);
+        }
         public async Task ClearCartAsync(string userId)
         {
             await _cartRepository.ClearCartAsync(userId);
@@ -44,6 +48,10 @@ namespace BookManagement.Services.Services
         public async Task<int> GetCartCountAsync(string userId)
         {
             return await _cartRepository.GetCartCountAsync(userId);
+        }
+        public async Task<CartItem?> GetCartItemByBookIdAsync(int bookId, string userId)
+        {
+            return await _cartRepository.GetCartItemByBookIdAsync(bookId, userId);
         }
     }
 }

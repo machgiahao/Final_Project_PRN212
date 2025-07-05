@@ -1,0 +1,38 @@
+﻿@page
+@model BookManagement.Pages.User.ProfileModel
+
+<link rel="stylesheet" href="~/css/User/profile.css" />
+
+<div class="profile-card">
+    <div class="profile-header">
+        <div class="profile-avatar">
+            <span>@Model.UserProfile.FullName.Substring(0, 1).ToUpper()</span>
+        </div>
+        <h2 class="profile-title">My Profile</h2>
+    </div>
+    <form method="post" class="profile-form" asp-page-handler="Edit">
+        <div class="profile-grid">
+            <div class="form-group">
+                <label asp-for="UserProfile.FullName">Full Name</label>
+                <input asp-for="UserProfile.FullName" class="form-control" />
+            </div>
+            <div class="form-group">
+                <label asp-for="UserProfile.Email">Email</label>
+                <input asp-for="UserProfile.Email" class="form-control" type="email" />
+            </div>
+            <div class="form-group">
+                <label asp-for="UserProfile.PhoneNumber">Phone Number</label>
+                <input asp-for="UserProfile.PhoneNumber" class="form-control" />
+            </div>
+            <div class="form-group">
+                <label asp-for="UserProfile.Address">Address</label>
+                <input asp-for="UserProfile.Address" class="form-control" />
+            </div>
+        </div>
+        <div class="form-group">
+            <label asp-for="UserProfile.Bio">Bio</label>
+            <textarea asp-for="UserProfile.Bio" class="form-control" rows="3"></textarea>
+        </div>
+        <button type="submit" class="btn btn-primary profile-save-btn">Save Changes</button>
+    </form>
+</div>

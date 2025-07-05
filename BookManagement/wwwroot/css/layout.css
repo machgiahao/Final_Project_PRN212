@@ -81,3 +81,17 @@
     margin-top: 0;
     transition: none;
 }
+.navbar-custom {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    z-index: 1050;
+    box-shadow: 0 2px 8px rgba(60,72,88,0.04);
+    background: #fff;
+}
+
+body {
+    padding-top: 72px; /* Đúng với chiều cao thực tế của header */
+}
+

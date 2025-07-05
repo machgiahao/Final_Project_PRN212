@@ -15,7 +15,9 @@ namespace BookManagement.Services.IServices
         Task<IEnumerable<CartItem>> GetCartItemsByUserIdAsync(string userId);
         Task UpdateCartItemAsync(CartItem cartItem);
         Task DeleteCartItemAsync(int cartItemId);
+        Task RemoveCartItemsAsync(string userId, List<int> cartItemIds);
         Task ClearCartAsync(string userId);
         public Task<int> GetCartCountAsync(string userId);
+        public Task<CartItem?> GetCartItemByBookIdAsync(int bookId, string userSId);
     }
 }

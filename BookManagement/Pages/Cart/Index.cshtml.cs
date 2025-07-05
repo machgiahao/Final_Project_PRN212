@@ -38,5 +38,30 @@ namespace BookManagement.Pages.Cart
             await _cartService.DeleteCartItemAsync(cartItemId);
             return RedirectToPage();
         }
+
+        public async Task<IActionResult> OnPostUpdateQuantityAsync(int cartItemId, int quantity)
+        {
+            if (quantity < 1)
+            {
+                return RedirectToPage();
+            }
+
+            var cartItem = await _cartService.GetCartItemByIdAsync(cartItemId);
+            if (cartItem == null)
+            {
+                return RedirectToPage();
+            }
+            var stock = cartItem.Book?.Stock ?? 0;
+            if (quantity > stock)
+            {
+                quantity = stock;
+            }
+
+            cartItem.Quantity = quantity;
+            await _cartService.UpdateCartItemAsync(cartItem);
+
+            return RedirectToPage();
+        }
+
     }
 }

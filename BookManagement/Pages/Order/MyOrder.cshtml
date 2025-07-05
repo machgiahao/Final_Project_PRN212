@@ -1,0 +1,92 @@
+﻿@page
+@model BookManagement.Pages.Order.MyOrderModel
+
+<link rel="stylesheet" href="~/css/Order/myOrder.css" />
+
+<div class="container">
+    @if (TempData["SuccessMessage"] != null)
+    {
+        <div class="alert alert-success alert-dismissible fade show mt-3" role="alert">
+            <i class="bi bi-check-circle-fill me-2"></i>
+            @TempData["SuccessMessage"]
+            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+        </div>
+    }
+    <form method="get" style="max-width: 300px;">
+        <div class="input-group mt-5 mb-5">
+            <select class="form-select" name="status" onchange="this.form.submit()">
+                <option value="">All Status</option>
+                <option value="Pending" selected="@(Request.Query["status"] == "Pending")">Pending</option>
+                <option value="Completed" selected="@(Request.Query["status"] == "Confirmed")">Confirmed</option>
+                <option value="Shipping" selected="@(Request.Query["status"] == "Shipping")">Shipping</option>
+                <option value="Processing" selected="@(Request.Query["status"] == "Completed")">Completed</option>
+                <option value="Cancelled" selected="@(Request.Query["status"] == "Cancelled")">Cancelled</option>
+            </select>
+        </div>
+    </form>
+    @foreach (var order in Model.Orders)
+    {
+        <div class="order-card animate__animated animate__fadeIn">
+            <div class="order-header">
+                <div>
+                    <span class="order-date"><i class="far fa-calendar-alt"></i> <strong style="margin-left: 5px">Date:  </strong> @order.OrderDate?.ToString("dd/MM/yyyy HH:mm")</span>
+                    <span class="order-status @order.StatusText">@order.StatusText</span>
+                </div>
+                @if (order.StatusText == "Pending")
+                {
+                    <form method="post" asp-page-handler="Cancel" asp-route-id="@order.OrderId" style="display:inline;">
+                        <button type="submit" class="btn btn-danger order-btn ms-2" onclick="return confirm('Are you sure you want to cancel this order ?');">
+                            <i class="fas fa-times-circle" style="margin-right: 5px"></i> Cancelled
+                        </button>
+                    </form>
+                }
+            </div>
+
+            <div class="order-content">
+                @foreach (var detail in order.OrderDetails)
+                {
+                    <div class="order-item">
+                        <div class="order-item-image">
+                            <img src="@detail.Book.ImageUrl" alt="@detail.Book.Title" class="book-thumbnail" />
+                        </div>
+                        <div class="order-item-details">
+                            <div class="order-item-title">@detail.Book.Title</div>
+                            <div class="order-item-category">
+                                @if (!string.IsNullOrEmpty(detail.Book?.Category?.Name))
+                                {
+                                    <span>@detail.Book.Category.Name</span>
+                                }
+                            </div>
+                        </div>
+                        <div class="order-item-price">
+                            @detail.UnitPrice.ToString("N0") đ
+                        </div>
+                        <div class="order-item-quantity">
+                            <span>@detail.Quantity</span>
+                        </div>
+                        <div class="order-item-subtotal">
+                            @((detail.UnitPrice * detail.Quantity).ToString("N0")) đ
+                        </div>
+                    </div>
+                }
+            </div>
+
+            <div class="order-footer">
+                <div class="order-info">
+                    <span><i class="fas fa-user ml-1"></i><strong>Recipient: </strong> @order.RecipientName</span>
+                    <span><i class="fas fa-map-marker-alt ml-1"></i> <strong>Address: </strong> @order.ShippingAddress</span>
+                    <span><i class="fas fa-phone ml-1"></i> <strong>Phone: </strong> @order.PhoneNumber</span>
+                </div>
+                <div class="order-total">
+                    <i class="fas fa-money-bill-wave" style="margin-right: 5px"></i> Total: @order.TotalPrice.ToString("N0") đ
+                </div>
+            </div>
+        </div>
+    }
+</div>
+
+<!-- Add Font Awesome for icons -->
+<script defer src="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/js/all.min.js"></script>
+
+<!-- Add Animate.css for subtle animations -->
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/4.1.1/animate.min.css" />

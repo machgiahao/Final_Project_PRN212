@@ -76,6 +76,7 @@ namespace BookManagement.DataAccess.Repositories
                     .Include(o => o.OrderDetails)
                         .ThenInclude(od => od.Book)
                     .Where(o => o.UserId == userId)
+                    .OrderByDescending(o => o.OrderDate)
                     .ToListAsync();
             }
             catch (Exception ex)

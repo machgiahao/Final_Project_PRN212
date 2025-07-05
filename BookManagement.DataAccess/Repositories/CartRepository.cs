@@ -6,6 +6,8 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using System.Net;
+using Microsoft.IdentityModel.Tokens;
 
 namespace BookManagement.DataAccess.Repositories
 {
@@ -51,6 +53,22 @@ namespace BookManagement.DataAccess.Repositories
             }
         }
 
+        public async Task<CartItem?> GetCartItemByBookIdAsync(int bookId, string userId)
+        {
+            try
+            {
+                return await _context.CartItems
+                    .Include(ci => ci.Book)
+                    .Include(ci => ci.User)
+                    .OrderByDescending(ci => ci.CreatedAt)
+                    .FirstOrDefaultAsync(ci => ci.BookId == bookId && ci.UserId == userId);
+            }
+            catch (Exception ex)
+            {
+                throw new Exception($"An error occurred while retrieving the cart item with ID {bookId}.", ex);
+            }
+        }
+
         public async Task<IEnumerable<CartItem>> GetCartItemsByUserIdAsync(string userId)
         {
             try
@@ -92,15 +110,42 @@ namespace BookManagement.DataAccess.Repositories
         {
             try
             {
-                var cartItem = await _context.CartItems.FindAsync(cartItemId);
+                var cartItem = await _context.CartItems.FirstOrDefaultAsync(ci => ci.CartItemId == cartItemId);
                 if (cartItem != null)
                 {
                     _context.CartItems.Remove(cartItem);
                     await _context.SaveChangesAsync();
                 }
-                else
+            }
+            catch (DbUpdateConcurrencyException ex)
+            {
+                throw new Exception("A concurrency error occurred while updating the cart item.", ex);
+            }
+            catch (DbUpdateException ex)
+            {
+                throw new Exception("An error occurred while updating the cart item in the database.", ex);
+            }
+            catch (Exception ex)
+            {
+                throw new Exception("An unexpected error occurred while updating the cart item.", ex);
+            }
+        }
+
+        public async Task RemoveCartItemsAsync(string userId, List<int> cartItemIds)
+        {
+            try
+            {
+                if (string.IsNullOrEmpty(userId) || cartItemIds == null || !cartItemIds.Any())
+                    return;
+
+                var itemsToRemove = await _context.CartItems
+                    .Where(ci => ci.UserId == userId && cartItemIds.Contains(ci.CartItemId))
+                    .ToListAsync();
+
+                if (itemsToRemove.Any())
                 {
-                    throw new KeyNotFoundException($"Cart item with ID {cartItemId} not found.");
+                    _context.CartItems.RemoveRange(itemsToRemove);
+                    await _context.SaveChangesAsync();
                 }
             }
             catch (DbUpdateException ex)

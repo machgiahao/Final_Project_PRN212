@@ -33,7 +33,7 @@
                         <span class="input-group-text bg-transparent border-0">
                             <i class="fa-solid fa-magnifying-glass"></i>
                         </span>
-                        <input type="text" class="form-control shadow-none" name="q" placeholder="What are you looking for today?" />
+                        <input type="text" class="form-control shadow-none" name="name" placeholder="What are you looking for today?" />
                     </div>
                 </form>
                 <!-- Cart and Account -->
@@ -52,13 +52,12 @@
                                 @if (role == "Admin")
                                 {
                                     <li><a class="dropdown-item" href="/Admin/Dashboard">Dashboard</a></li>
-                                    <li><a class="dropdown-item" href="/User/Index">Manage Account</a></li>
                                 }
-                                else
+                                <li><a class="dropdown-item" href="/User/Profile">Profile</a></li>
+                                @if (role == "Customer")
                                 {
-                                    <li><a class="dropdown-item" href="/Profile">Profile</a></li>
+                                    <li><a class="dropdown-item" href="/Order/MyOrder">My Order</a></li>
                                 }
-                                <li><a class="dropdown-item" href="/Orders/History">Order history</a></li>
                                 <li><a class="dropdown-item" href="/Auth/Logout">Logout</a></li>
                             </ul>
                         </div>

@@ -53,13 +53,25 @@ namespace BookManagement.Pages.Book
             {
                 return RedirectToPage("/Auth/Login");
             }
+            if(Quantity > bookEntity.Stock)
+            {
+                TempData["ErrorMessage"] = "Out of Stock!";
+            }
             var cartItem = new CartItem
             {
                 BookId = bookEntity.BookId,
                 UserId = userId,
                 Quantity = Quantity
             };
-            await _cartService.AddCartItemAsync(cartItem);
+            var isExist = await _cartService.GetCartItemByBookIdAsync(bookEntity.BookId, userId);
+            if(isExist == null)
+            {
+                await _cartService.AddCartItemAsync(cartItem);
+            } else
+            {
+                isExist.Quantity += Quantity;
+                await _cartService.UpdateCartItemAsync(isExist);
+            }
             TempData["SuccessMessage"] = "Added to cart!";
             return RedirectToPage(new { id = Id });
         }
