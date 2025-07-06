@@ -1,0 +1,243 @@
+﻿.dashboard-container {
+    background: #fff;
+    border-radius: 16px;
+    box-shadow: 0 2px 16px rgba(0,0,0,0.06);
+    padding: 32px 24px;
+    margin: 24px auto;
+    max-width: 1200px;
+}
+
+.dashboard-title {
+    text-align: center;
+    font-size: 2rem;
+    font-weight: bold;
+    margin-bottom: 32px;
+    letter-spacing: 1px;
+}
+
+.dashboard-stats-row {
+    display: flex;
+    gap: 24px;
+    justify-content: center;
+    margin-bottom: 32px;
+    flex-wrap: wrap;
+}
+
+.dashboard-stat-card {
+    flex: 1 1 0;
+    background: #f8fafc;
+    border-radius: 12px;
+    box-shadow: 0 1px 4px rgba(0,0,0,0.04);
+    display: flex;
+    align-items: center;
+    padding: 20px 24px;
+    min-width: 180px;
+    max-width: 240px;
+    gap: 16px;
+}
+
+.stat-icon {
+    font-size: 2.2rem;
+    color: #3a86ff;
+    margin-right: 10px;
+}
+
+.stat-label {
+    font-size: 1rem;
+    color: #888;
+}
+
+.stat-value {
+    font-size: 1.5rem;
+    font-weight: bold;
+    color: #222;
+}
+
+.dashboard-main-layout {
+    margin-top: 24px;
+}
+
+.dashboard-row {
+    display: flex;
+    gap: 24px;
+    margin-bottom: 24px;
+    flex-wrap: wrap;
+}
+
+    .dashboard-row > .dashboard-card {
+        flex: 1 1 0;
+        min-width: 320px;
+        max-width: 100%;
+    }
+
+.dashboard-card {
+    background: #f8fafc;
+    border-radius: 12px;
+    box-shadow: 0 1px 4px rgba(0,0,0,0.04);
+    padding: 24px;
+    margin-bottom: 0;
+}
+
+.dashboard-chart-card {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+.dashboard-chart-title {
+    font-size: 1.1rem;
+    font-weight: 500;
+    margin-bottom: 12px;
+    color: #3a86ff;
+    text-align: center;
+}
+
+.dashboard-table-card table {
+    width: 100%;
+    border-collapse: collapse;
+}
+
+.dashboard-table-card th, .dashboard-table-card td {
+    padding: 8px 12px;
+    text-align: left;
+}
+
+.dashboard-table-card th {
+    background: #f0f4fa;
+    font-weight: 600;
+}
+
+.dashboard-table-card tr:nth-child(even) {
+    background: #f8fafc;
+}
+
+.table-responsive {
+    overflow-x: auto;
+}
+
+@media (max-width: 900px) {
+    .dashboard-row {
+        flex-direction: column;
+    }
+
+    .dashboard-row > .dashboard-card {
+        min-width: 100%;
+    }
+}
+.dashboard-stats-row {
+    display: flex;
+    gap: 32px;
+    justify-content: center;
+    margin-bottom: 32px;
+    flex-wrap: wrap;
+}
+
+.dashboard-stat-card {
+    flex: 1 1 0;
+    min-width: 200px;
+    max-width: 260px;
+    background: #f8fafc;
+    border-radius: 18px;
+    box-shadow: 0 2px 12px rgba(58,134,255,0.08);
+    display: flex;
+    align-items: center;
+    padding: 28px 28px 24px 28px;
+    gap: 18px;
+    transition: transform 0.15s, box-shadow 0.15s;
+    position: relative;
+    overflow: hidden;
+    cursor: pointer;
+}
+
+    .dashboard-stat-card:hover {
+        transform: translateY(-4px) scale(1.03);
+        box-shadow: 0 6px 24px rgba(58,134,255,0.18);
+    }
+
+    .dashboard-stat-card.stat1 {
+        background: linear-gradient(135deg, #e0f0ff 60%, #b3e0ff 100%);
+    }
+
+    .dashboard-stat-card.stat2 {
+        background: linear-gradient(135deg, #fff4e0 60%, #ffe0b3 100%);
+    }
+
+    .dashboard-stat-card.stat3 {
+        background: linear-gradient(135deg, #e0ffe7 60%, #b3ffd1 100%);
+    }
+
+    .dashboard-stat-card.stat4 {
+        background: linear-gradient(135deg, #f3e0ff 60%, #e0b3ff 100%);
+    }
+
+.stat-icon {
+    font-size: 2.6rem;
+    color: #3a86ff;
+    filter: drop-shadow(0 2px 6px rgba(58,134,255,0.15));
+    min-width: 48px;
+    text-align: center;
+}
+
+.stat1 .stat-icon {
+    color: #3a86ff;
+}
+
+.stat2 .stat-icon {
+    color: #ffbe0b;
+}
+
+.stat3 .stat-icon {
+    color: #43aa8b;
+}
+
+.stat4 .stat-icon {
+    color: #8338ec;
+}
+
+.stat-label {
+    font-size: 1.08rem;
+    color: #555;
+    font-weight: 500;
+    margin-bottom: 2px;
+    letter-spacing: 0.5px;
+}
+
+.stat-value {
+    font-size: 2rem;
+    font-weight: bold;
+    color: #222;
+    margin-top: 2px;
+    letter-spacing: 1px;
+}
+/* Top Selling Books Table Row Styles */
+.top-book-row {
+    transition: background 0.2s, color 0.2s;
+}
+
+    .top-book-row:hover {
+        background: #eaf6ff;
+    }
+
+    .top-book-row.top1 {
+        background: linear-gradient(90deg, #ffe066 0%, #fffbe6 100%);
+        font-weight: bold;
+        color: #d4a100;
+    }
+
+    .top-book-row.top2 {
+        background: linear-gradient(90deg, #e0e7ff 0%, #f0f4ff 100%);
+        color: #3a86ff;
+    }
+
+    .top-book-row.top3 {
+        background: linear-gradient(90deg, #e0fff4 0%, #f0fff9 100%);
+        color: #43aa8b;
+    }
+
+.top1-crown {
+    color: #ffd700;
+    margin-right: 8px;
+    font-size: 1.1em;
+    vertical-align: middle;
+    filter: drop-shadow(0 1px 2px #fffbe6);
+}

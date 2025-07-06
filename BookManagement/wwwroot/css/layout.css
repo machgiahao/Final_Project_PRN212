@@ -81,17 +81,14 @@
     margin-top: 0;
     transition: none;
 }
-.navbar-custom {
-    position: fixed;
-    top: 0;
-    left: 0;
+header, .navbar-custom {
+    position: static; /* or simply remove the position property */
     width: 100%;
-    z-index: 1050;
-    box-shadow: 0 2px 8px rgba(60,72,88,0.04);
-    background: #fff;
+    z-index: 1030;
 }
 
+
 body {
-    padding-top: 72px; /* Đúng với chiều cao thực tế của header */
+    padding-top: 0; /* Đúng với chiều cao thực tế của header */
 }
 

@@ -54,12 +54,12 @@
 
 
 <aside class="sidebar">
-    <div class="sidebar-header">
+    <div class="sidebar-header text-center">
         <span>Admin</span>
     </div>
     <ul class="sidebar-menu">
         <li>
-            <a href="/Admin/Dashboard">
+            <a href="/Dashboard/Index" class="@(Context.Request.Path.Value.Contains("/Dashboard") ? "active" : "")">
                 <span>Dashboard</span>
             </a>
         </li>
@@ -71,6 +71,11 @@
         <li>
             <a href="/Book/Index" class="@(Context.Request.Path.Value.Contains("/Book") ? "active" : "")">
                 <span>Manage Books</span>
+            </a>
+        </li>
+        <li>
+            <a href="/Category/Index" class="@(Context.Request.Path.Value.Contains("/Category") ? "active" : "")">
+                <span>Manage Categories</span>
             </a>
         </li>
         <li>

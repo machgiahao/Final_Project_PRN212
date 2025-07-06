@@ -16,3 +16,22 @@
     font-weight: 600;
     color: #1976d2;
 }
+.logout-btn {
+    color: #fff !important;
+    background: #00bfff;
+    border: none;
+    border-radius: 4px;
+    padding: 6px 16px;
+    font-weight: 500;
+    text-decoration: none;
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    transition: background 0.2s;
+}
+
+.logout-btn:hover {
+    background: #0099cc;
+    color: #fff !important;
+    text-decoration: none;
+}

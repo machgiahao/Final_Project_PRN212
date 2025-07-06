@@ -27,12 +27,13 @@
                     <i class="fa-solid fa-book"></i>
                     FBook
                 </a>
-                <span class="admin-title">Admin Panel</span>
                 <div class="d-flex align-items-center">
                     @if (isAuthenticated && !string.IsNullOrEmpty(displayName))
                     {
                         <span class="account-link"><i class="fa-solid fa-user"></i> @displayName</span>
-                        <a href="/Auth/Logout" class="ms-3">Logout</a>
+                        <a href="/Auth/Logout" class="logout-btn ms-3 text-decoration-none">
+                            <i class="fa-solid fa-right-from-bracket"></i> Logout
+                        </a>
                     }
                 </div>
             </div>
@@ -44,11 +45,6 @@
             @RenderBody()
         </main>
     </div>
-    <footer class="border-top footer text-muted mt-4">
-        <div class="container-fluid">
-            &copy; 2025 - BookManagement - <a asp-area="" asp-page="/Privacy">Privacy</a>
-        </div>
-    </footer>
     <script src="~/lib/jquery/dist/jquery.min.js"></script>
     <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
     <script src="~/js/site.js" asp-append-version="true"></script>

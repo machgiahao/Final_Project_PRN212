@@ -1,0 +1,170 @@
+﻿@page
+@model BookManagement.Pages.Dashboard.IndexModel
+@using System.Text.Json
+@{
+    ViewData["Title"] = "Admin Dashboard";
+    var salesByMonthJson = JsonSerializer.Serialize(Model.Dashboard.SalesByMonth);
+    var categoryLabelsJson = JsonSerializer.Serialize(Model.Dashboard.CategoryLabels);
+    var booksSoldByCategoryJson = JsonSerializer.Serialize(Model.Dashboard.BooksSoldByCategory);
+    var revenueByCategoryJson = JsonSerializer.Serialize(Model.Dashboard.RevenueByCategory);
+    Layout = "_AdminLayout";
+}
+<link rel="stylesheet" href="~/css/Dashboard/index.css" />
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css" />
+
+<div class="dashboard-container">
+    <h1 class="dashboard-title">Admin Dashboard</h1>
+    <div class="dashboard-stats-row">
+        <div class="dashboard-stat-card stat1">
+            <div class="stat-icon"><i class="fa-solid fa-users"></i></div>
+            <div>
+                <div class="stat-label">Users</div>
+                <div class="stat-value">@Model.Dashboard.TotalUsers</div>
+            </div>
+        </div>
+        <div class="dashboard-stat-card stat2">
+            <div class="stat-icon"><i class="fa-solid fa-book"></i></div>
+            <div>
+                <div class="stat-label">Books Sold</div>
+                <div class="stat-value">@Model.Dashboard.BooksSold</div>
+            </div>
+        </div>
+        <div class="dashboard-stat-card stat3">
+            <div class="stat-icon"><i class="fa-solid fa-cart-shopping"></i></div>
+            <div>
+                <div class="stat-label">Orders</div>
+                <div class="stat-value">@Model.Dashboard.TotalOrders</div>
+            </div>
+        </div>
+        <div class="dashboard-stat-card stat4">
+            <div class="stat-icon"><i class="fa-solid fa-dollar-sign"></i></div>
+            <div>
+                <div class="stat-label">Revenue</div>
+                <div class="stat-value">@Model.Dashboard.TotalRevenue.ToString("C")</div>
+            </div>
+        </div>
+    </div>
+
+    <div class="dashboard-main-layout">
+        <div class="dashboard-row">
+            <div class="dashboard-card dashboard-chart-card">
+                <div class="dashboard-chart-title">Sales by Month</div>
+                <canvas id="salesChart"></canvas>
+            </div>
+            <div class="dashboard-card dashboard-table-card">
+                <div class="dashboard-chart-title">Top Selling Books</div>
+                <div class="table-responsive">
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>Book Title</th>
+                                <th>Quantity Sold</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                        <tbody>
+                                @for (int i = 0; i < Model.Dashboard.TopSellingBooks.Count; i++)
+                                {
+                                    var book = Model.Dashboard.TopSellingBooks[i];
+                                    var isTop1 = i == 0;
+                                    var rowClass = isTop1 ? "top-book-row top1" : (i == 1 ? "top-book-row top2" : (i == 2 ? "top-book-row top3" : "top-book-row"));
+                                <tr class="@rowClass">
+                                    <td>
+                                            @if (isTop1)
+                                            {
+                                            <i class="fa-solid fa-crown top1-crown"></i>
+                                            }
+                                            @book.Title
+                                    </td>
+                                    <td>@book.QuantitySold</td>
+                                </tr>
+                                }
+                        </tbody>
+
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+        <div class="dashboard-row">
+            <div class="dashboard-card dashboard-chart-card">
+                <div class="dashboard-chart-title">Books Sold by Category</div>
+                <canvas id="barCategoryChart"></canvas>
+            </div>
+            <div class="dashboard-card dashboard-chart-card">
+                <div class="dashboard-chart-title">Revenue by Category</div>
+                <canvas id="pieCategoryChart"></canvas>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script>
+        // Lấy dữ liệu từ Razor Model
+        const salesByMonth = @Html.Raw(salesByMonthJson);
+        const categoryLabels = @Html.Raw(categoryLabelsJson);
+        const booksSoldByCategory = @Html.Raw(booksSoldByCategoryJson);
+        const revenueByCategory = @Html.Raw(revenueByCategoryJson);
+
+        // Line chart: Sales by Month
+        new Chart(document.getElementById('salesChart').getContext('2d'), {
+            type: 'line',
+            data: {
+                labels: ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'],
+                datasets: [{
+                    label: 'Sales',
+                    data: salesByMonth,
+                    borderColor: '#3a86ff',
+                    backgroundColor: 'rgba(58,134,255,0.1)',
+                    tension: 0.4,
+                    fill: true,
+                    pointRadius: 4,
+                    pointBackgroundColor: '#3a86ff'
+                }]
+            },
+            options: {
+                plugins: { legend: { display: false } },
+                scales: { y: { beginAtZero: true } }
+            }
+        });
+
+        // Bar chart: Books Sold by Category
+        new Chart(document.getElementById('barCategoryChart').getContext('2d'), {
+            type: 'bar',
+            data: {
+                labels: categoryLabels,
+                datasets: [{
+                    label: 'Books Sold',
+                    data: booksSoldByCategory,
+                    backgroundColor: [
+                        '#3a86ff', '#ffbe0b', '#fb5607', '#8338ec', '#43aa8b'
+                    ]
+                }]
+            },
+            options: {
+                plugins: { legend: { display: false } },
+                scales: { y: { beginAtZero: true } }
+            }
+        });
+
+        // Pie chart: Revenue by Category
+        new Chart(document.getElementById('pieCategoryChart').getContext('2d'), {
+            type: 'pie',
+            data: {
+                labels: categoryLabels,
+                datasets: [{
+                    label: 'Revenue',
+                    data: revenueByCategory,
+                    backgroundColor: [
+                        '#3a86ff', '#ffbe0b', '#fb5607', '#8338ec', '#43aa8b'
+                    ]
+                }]
+            },
+            options: {
+                plugins: { legend: { position: 'bottom' } }
+            }
+        });
+    </script>
+}
