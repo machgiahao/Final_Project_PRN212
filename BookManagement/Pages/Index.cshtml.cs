@@ -1,51 +1,47 @@
-using BookManagement.BusinessObjects.Entities;
+using AutoMapper;
 using BookManagement.Services.IServices;
 using BookManagement.ViewModels.Book;
-using BookManagement.ViewModels.Shared;
+using BookManagement.ViewModels.Home;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
-using System.Collections.Generic;
-using System.Threading.Tasks;
 
-public class IndexModel : PageModel
+namespace BookManagement.Pages
 {
-    private readonly IBookService _bookService;
-    private readonly ICategoryService _categoryService;
-
-    public IndexModel(IBookService bookService, ICategoryService categoryService)
+    public class IndexModel : PageModel
     {
-        _bookService = bookService;
-        _categoryService = categoryService;
-    }
+        private readonly ICategoryService _categoryService;
+        private readonly IBookService _bookService;
+        private readonly IMapper _mapper;
 
-    public List<Book> Books { get; set; } = new();
-    public List<Category> Categories { get; set; } = new();
-    public PaginationViewModel Pagination { get; set; } = new();
-
-    [BindProperty(SupportsGet = true)]
-    public BookFilterViewModel Filter { get; set; } = new();
-    public async Task OnGetAsync(int pageNumber = 1)
-    {
-        var pagedResult = await _bookService.GetBooksPagedAsync(
-                    Filter.PageNumber,
-                    Filter.PageSize,
-                    Filter.SelectedCategories,
-                    Filter.MinPrice,
-                    Filter.MaxPrice);
-
-        Books = pagedResult.Items.ToList();
-
-        Pagination = new PaginationViewModel
+        public IndexModel(ICategoryService categoryService, IBookService bookService, IMapper mapper)
         {
-            CurrentPage = Filter.PageNumber,
-            PageSize = Filter.PageSize,
-            TotalCount = pagedResult.TotalCount,
-            TotalPages = (int)Math.Ceiling((double)pagedResult.TotalCount / Filter.PageSize)
-        };
+            _categoryService = categoryService;
+            _bookService = bookService;
+            _mapper = mapper;
+        }
 
-        var categories = await _categoryService.GetAllCategoriesAsync();
-        Categories = categories?.ToList() ?? new List<Category>();
+        public HomeViewModel Home { get; set; } = new();
+        public async Task OnGetAsync()
+        {
+            // Get featured categories (e.g., top 6)
+            var categories = await _categoryService.GetAllCategoriesAsync();
+            Home.FeaturedCategories = categories.Take(6).ToList();
+
+            // Get all books
+            var books = await _bookService.GetAllBooksAsync();
+            var bookViewModel = _mapper.Map<List<BookViewModel>>(books);
+
+            // Bestselling books (top 6 by Sold)
+            Home.BestsellingBooks = bookViewModel
+                .OrderByDescending(b => b.Sold)
+                .Take(6)
+                .ToList();
+
+            // Featured books
+            Home.NewReleaseBooks = bookViewModel
+                .OrderByDescending(b => b.CreatedAt)
+                .Take(12)
+                .ToList();
+        }
     }
-
-
 }

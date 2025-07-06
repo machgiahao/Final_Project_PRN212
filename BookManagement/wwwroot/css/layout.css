@@ -1,4 +1,23 @@
-﻿.navbar-custom {
+﻿html, body {
+    height: 100%;
+    margin: 0;
+    padding: 0;
+}
+
+body {
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+}
+
+.container {
+    flex: 1 0 auto;
+}
+
+footer.footer-custom {
+    flex-shrink: 0;
+}
+.navbar-custom {
     background: #fff;
     border-bottom: 1px solid #e3e6ef;
     box-shadow: 0 2px 8px rgba(60,72,88,0.04);
@@ -82,13 +101,112 @@
     transition: none;
 }
 header, .navbar-custom {
-    position: static; /* or simply remove the position property */
+    position: static;
     width: 100%;
     z-index: 1030;
 }
 
-
 body {
-    padding-top: 0; /* Đúng với chiều cao thực tế của header */
+    padding-top: 0;
 }
 
+.footer-custom {
+    background: #0077c8; /* Sea blue */
+    color: #fff;
+    border-top: none;
+    font-size: 1rem;
+}
+
+.footer-custom .footer-link {
+    color: #e0e7ef;
+}
+
+.footer-custom .footer-link:hover {
+    color: #fff;
+    text-decoration: underline;
+}
+
+.footer-custom .footer-social {
+    color: #fff;
+}
+
+.footer-custom .footer-social:hover {
+    color: #aee3fa;
+}
+
+.footer-custom h6 {
+    color: #fff;
+}
+
+.footer-custom .text-muted {
+    color: #cbe7fa !important;
+}
+
+.footer-map {
+    margin-left: 20px;
+    border-radius: 12px;
+    overflow: hidden;
+}
+
+.footer-map iframe {
+    border-radius: 12px;
+    margin-left: 1rem;
+}
+
+.main-menu {
+    background: #f7f9fa;
+    border-radius: 8px;
+    padding: 0.5rem 1.5rem;
+    font-size: 1.08rem;
+    font-weight: 500;
+    gap: 2.5rem;
+}
+
+.main-menu .nav-link {
+    color: #444;
+    transition: color 0.2s;
+}
+
+.main-menu .nav-link.active,
+.main-menu .nav-link:hover {
+    color: #007bff;
+    font-weight: 600;
+}
+.custom-search-bar .input-group {
+    box-shadow: 0 4px 24px rgba(44, 62, 80, 0.10), 0 1.5px 4px rgba(44, 62, 80, 0.08);
+    border-radius: 40px;
+    background: #fff;
+    overflow: hidden;
+    transition: box-shadow 0.2s;
+}
+
+    .custom-search-bar .input-group:focus-within {
+        box-shadow: 0 6px 32px rgba(44, 62, 80, 0.18), 0 2px 8px rgba(44, 62, 80, 0.12);
+    }
+
+.custom-search-bar .input-group-text {
+    background: transparent;
+    border: none;
+    padding-left: 20px;
+    padding-right: 10px;
+    font-size: 1.2rem;
+    color: #7c3aed;
+}
+
+.custom-search-bar .form-control {
+    border: none;
+    border-radius: 40px;
+    background: transparent;
+    font-size: 1.15rem;
+    padding: 16px 24px;
+    box-shadow: none;
+}
+
+    .custom-search-bar .form-control:focus {
+        background: transparent;
+        box-shadow: none;
+    }
+.welcome-title {
+    text-shadow: 0 2px 8px rgba(0,0,0,0.18);
+    letter-spacing: 1px;
+}

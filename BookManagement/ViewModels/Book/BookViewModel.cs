@@ -12,5 +12,6 @@
         public string? CategoryName { get; set; }
         public string? Author { get; set; }
         public string? ImageUrl { get; set; }
+        public DateTime? CreatedAt { get; set; }
     }
 }

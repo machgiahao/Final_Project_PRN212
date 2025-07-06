@@ -1,139 +1,137 @@
 ﻿@page
-@model IndexModel
+@model BookManagement.Pages.IndexModel
 @{
-    ViewData["Title"] = "Home page";
-    var selectedCategories = Model.Filter.SelectedCategories != null && Model.Filter.SelectedCategories.Any()
-        ? Model.Filter.SelectedCategories.Select(id => $"Filter.SelectedCategories={id}")
-        : Enumerable.Empty<string>();
-    var categoryQuery = string.Join("&", selectedCategories);
-}
-@functions {
-    string BuildQueryString(int pageNumber)
-    {
-        var query = new List<string> { $"Filter.PageNumber={pageNumber}" };
-
-        if (Model.Filter.SelectedCategories != null)
-        {
-            foreach (var cat in Model.Filter.SelectedCategories)
-            {
-                query.Add($"Filter.SelectedCategories={cat}");
-            }
-        }
-        if (Model.Filter.MinPrice.HasValue)
-        {
-            query.Add($"Filter.MinPrice={Model.Filter.MinPrice.Value}");
-        }
-        if (Model.Filter.MaxPrice.HasValue)
-        {
-            query.Add($"Filter.MaxPrice={Model.Filter.MaxPrice.Value}");
-        }
-        return "?" + string.Join("&", query);
-    }
+    ViewData["Title"] = "Home";
 }
 
-<link rel="stylesheet" href="~/css/Book/book.css" />
-<div class="container-fluid mt-4">
-    <div class="row">
-        <!-- Sidebar Filter -->
-        <div class="col-md-3">
-            <div class="card filter-card">
-                <div class="card-header">
-                    <strong>Search Filters</strong>
-                </div>
-                <div class="card-body">
-                    <h6>Categories</h6>
-                    <form method="get">
-                        @if (Model.Categories != null && Model.Categories.Any())
-                        {
-                            foreach (var category in Model.Categories)
-                            {
-                                <div class="form-check">
-                                    <input class="form-check-input"
-                                           type="checkbox"
-                                           id="cat_@category.CategoryId"
-                                           name="Filter.SelectedCategories"
-                                           value="@category.CategoryId"
-                                    @(Model.Filter.SelectedCategories != null && Model.Filter.SelectedCategories.Contains(category.CategoryId) ? "checked" : "") />
-                                    <label class="form-check-label" for="cat_@category.CategoryId">@category.Name</label>
-                                </div>
-                            }
-                        }
-                        <hr />
-                        <h6>Price Range</h6>
-                        <div class="input-group mb-2">
-                            <input type="number" class="form-control" name="Filter.MinPrice" value="@(Model.Filter.MinPrice ?? null)" placeholder="50,000" min="0" />
-                            <span class="input-group-text">-</span>
-                            <input type="number" class="form-control" name="Filter.MaxPrice" value="@(Model.Filter.MaxPrice ?? null)" placeholder="2,000,000" min="0" />
-                        </div>
-                        <button type="submit" class="btn btn-primary w-100">Apply</button>
-                    </form>
-                </div>
+<link rel="stylesheet" href="~/css/home.css" />
+
+<section class="hero-banner position-relative d-flex align-items-center" style="min-height: 420px; width: 100vw; left: 50%; right: 50%; margin-left: -50vw; margin-right: -50vw; background: url('/img/banner.jpg') center center/cover no-repeat;">
+    <div class="hero-overlay position-absolute top-0 start-0 w-100 h-100" style="background: rgba(0,0,0,0.45); z-index:1;"></div>
+    <div class="container px-5 position-relative" style="z-index:2;">
+        <div class="container px-5 position-relative h-100" style="z-index:2;">
+            <div class="hero-content d-flex flex-column justify-content-center align-items-center text-center h-100 w-100" style="max-width: 700px; margin: 0 auto;">
+                <h1 class="welcome-title mb-4 fw-bold text-white">Welcome to FBook</h1>
+                <form class="search-bar d-flex w-100 custom-search-bar" method="get" action="/Book/Index">
+                    <div class="input-group w-100">
+                        <span class="input-group-text bg-white border-0">
+                            <i class="fa-solid fa-magnifying-glass"></i>
+                        </span>
+                        <input type="text" class="form-control shadow-none" name="title" placeholder="What book are you looking for?" style="font-size:1.15rem;" />
+                    </div>
+                </form>
             </div>
         </div>
+    </div>
+</section>
 
-        <!-- Main Content -->
-        <div class="col-md-9">
-            <div class="card">
-                <div class="card-body">
-                    <!-- Book Cards -->
-                    <div class="row row-cols-1 row-cols-sm-2 row-cols-md-3 row-cols-lg-5 g-3">
-                        @if (Model.Books != null && Model.Books.Any())
-                        {
-                            foreach (var book in Model.Books)
-                            {
-                                <a asp-page="/Book/Detail" asp-route-id="@book.BookId" style="text-decoration: none">
-                                    <div class="col d-flex">
-                                        <div class="card h-100 w-100 shadow-sm book-card" style="min-width: 160px; max-width: 180px;">
-                                            <img src="@(string.IsNullOrEmpty(book.ImageUrl) ? Url.Content("~/img/default.jpg") : Url.Content(book.ImageUrl))"
-                                                 class="card-img-top"
-                                                 alt="Book Cover"
-                                                 style="object-fit:cover; height:130px;">
-                                            <div class="card-body p-2 d-flex flex-column">
-                                                <h6 class="card-title mb-1" style="min-height:2.2em; font-size:1em;">@book.Title</h6>
-                                                <p class="card-text mb-1" style="font-size:1em;">
-                                                    <strong>@($"{book.Price?.ToString("N0") ?? "0"} ₫")</strong>
-                                                </p>
-                                                <div class="d-flex align-items-center justify-content-between mt-1">
-                                                    <span class="rating">&#9733;&#9733;&#9733;&#9733;&#9733;</span>
-                                                    <span class="sold ms-1">Sold <b>@book.Sold</b></span>
-                                                </div>
-                                                <div class="mt-auto"></div>
-                                            </div>
-                                        </div>
-                                    </div>
-                                </a>
-                            }
-                        }
-                        else
-                        {
-                            <div class="col">
-                                <div class="alert alert-info w-100">No books to display.</div>
-                            </div>
-                        }
+<!-- Featured Categories -->
+<section class="featured-categories py-5">
+    <div class="container-fluid px-5">
+        <div class="d-flex justify-content-between align-items-center mb-4">
+            <h2 class="fw-bold mb-0">Featured Categories</h2>
+            <a href="/Book/Index" class="text-decoration-none fw-semibold">All Categories <i class="fa fa-chevron-right"></i></a>
+        </div>
+        <div class="row g-4">
+            @{
+                var colorClasses = new[] { "cate-bg-purple", "cate-bg-yellow", "cate-bg-pink", "cate-bg-blue", "cate-bg-red", "cate-bg-green" };
+                var iconClasses = new[] { "fa-book", "fa-lightbulb", "fa-heart", "fa-rocket", "fa-music", "fa-leaf" };
+                var iconColors = new[] { "#7c3aed", "#f59e42", "#e11d48", "#2563eb", "#db2777", "#059669" };
+                var i = 0;
+            }
+            @foreach (var category in Model.Home.FeaturedCategories)
+            {
+                var colorClass = colorClasses[i % colorClasses.Length];
+                var iconClass = iconClasses[i % iconClasses.Length];
+                var iconColor = iconColors[i % iconColors.Length];
+                var filterUrl = $"/Book?Filter.SelectedCategories={category.CategoryId}";
+                <div class="col-6 col-md-2">
+                    <a href="@filterUrl" class="text-decoration-none">
+                        <div class="category-card text-center p-4 @colorClass">
+                            <i class="fa @iconClass fa-2x mb-2" style="color:@iconColor"></i>
+                            <div class="fw-semibold">@category.Name</div>
+                            <div class="text-muted small">Shop Now</div>
+                        </div>
+                    </a>
+                </div>
+                i++;
+            }
+        </div>
+    </div>
+</section>
+
+<!-- Bestselling Books -->
+<section class="bestselling-books py-5">
+    <div class="container-fluid px-5">
+        <div class="d-flex justify-content-between align-items-center mb-4">
+            <h2 class="fw-bold mb-0">Bestselling Books</h2>
+            <a href="/Book/Index" class="text-decoration-none fw-semibold">View All <i class="fa fa-chevron-right"></i></a>
+        </div>
+        <div class="row row-cols-1 row-cols-sm-2 row-cols-md-3 row-cols-lg-6 g-4">
+            @foreach (var book in Model.Home.BestsellingBooks)
+            {
+                <div class="col">
+                    <a href="@Url.Page("/Book/Detail", new { id = book.BookId })" class="text-decoration-none text-dark">
+                        <div class="book-card text-center p-3" style="border:1px solid #eee; border-radius:8px;">
+                            <img src="@(string.IsNullOrEmpty(book.ImageUrl) ? Url.Content("~/img/default.jpg") : Url.Content(book.ImageUrl))"
+                                 alt="@book.Title"
+                                 class="mb-2"
+                                 style="height:160px; object-fit:cover; border-radius:4px; width:100%;">
+                            <div class="fw-semibold">@book.Title</div>
+                            <div class="text-muted small">@book.Author</div>
+                            <div class="fw-bold mt-1">@($"{book.Price:N0}") đ</div>
+                        </div>
+                    </a>
+                </div>
+            }
+        </div>
+    </div>
+</section>
+
+<!-- New Release -->
+<section class="new-release-section py-5">
+    <div class="container-fluid px-5">
+        <div class="d-flex justify-content-between align-items-center mb-4">
+            <h2 class="fw-bold mb-0">New Release</h2>
+            <a href="/Book/Index" class="text-decoration-none fw-semibold">View All <i class="fa fa-chevron-right"></i></a>
+        </div>
+        <div class="new-release-slider d-flex overflow-auto gap-4 pb-2">
+            @foreach (var book in Model.Home.NewReleaseBooks)
+            {
+                <div class="new-release-card flex-shrink-0" style="width: 220px;">
+                    <div class="card border-0 shadow-sm h-100">
+                        <img src="@(string.IsNullOrEmpty(book.ImageUrl) ? Url.Content("~/img/default.jpg") : Url.Content(book.ImageUrl))"
+                             alt="@book.Title"
+                             class="card-img-top"
+                             style="height: 260px; object-fit: cover; border-radius: 12px 12px 0 0;">
+                        <div class="card-body d-flex flex-column">
+                            <div class="fw-semibold text-truncate mb-1" title="@book.Title">@book.Title</div>
+                            <div class="text-muted small text-truncate mb-1" title="@book.Author">@book.Author</div>
+                            <div class="fw-bold text-primary mt-auto">@($"{book.Price:N2}") đ</div>
+                        </div>
                     </div>
+                </div>
+            }
+        </div>
+    </div>
+</section>
 
-                    @* Pagination *@
-                    @if (Model.Pagination.TotalPages > 1)
-                    {
-                        <nav aria-label="Page navigation">
-                            <ul class="pagination justify-content-center mt-4">
-                                <li class="page-item @(Model.Pagination.CurrentPage == 1 ? "disabled" : "")">
-                                    <a class="page-link" href="@BuildQueryString(Model.Pagination.CurrentPage - 1)">Previous</a>
-                                </li>
-                                @for (int i = 1; i <= Model.Pagination.TotalPages; i++)
-                                {
-                                    <li class="page-item @(i == Model.Pagination.CurrentPage ? "active" : "")">
-                                        <a class="page-link" href="@BuildQueryString(i)">@i</a>
-                                    </li>
-                                }
-                                <li class="page-item @(Model.Pagination.CurrentPage == Model.Pagination.TotalPages ? "disabled" : "")">
-                                    <a class="page-link" href="@BuildQueryString(Model.Pagination.CurrentPage + 1)">Next</a>
-                                </li>
-                            </ul>
-                        </nav>
-                    }
+<!-- Newsletter / Join Community Section -->
+<section class="newsletter-section py-5" style="background: #fbe9ca;">
+    <div class="container-fluid px-5">
+        <div class="row align-items-center justify-content-center">
+            <div class="col-md-5 mb-4 mb-md-0">
+                <h4 class="fw-bold mb-3">Join Book Lovers<br />Community and Get<br />Latest Updates</h4>
+                <form class="d-flex" style="max-width: 350px;">
+                    <input type="email" class="form-control me-2" placeholder="Your Email Address" required />
+                    <button type="submit" class="btn btn-warning fw-semibold px-3" style="min-width: 110px;">SUBSCRIBE</button>
+                </form>
+            </div>
+            <div class="col-md-4 d-flex justify-content-center">
+                <div class="newsletter-books position-relative">
+                    <img src="~/img/news_letter.jpg" alt="Newsletter" class="newsletter-book-img-large" />
                 </div>
             </div>
         </div>
     </div>
-</div>
+</section>
