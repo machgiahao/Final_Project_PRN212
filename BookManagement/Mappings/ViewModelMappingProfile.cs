@@ -1,6 +1,7 @@
 ﻿using AutoMapper;
 using BookManagement.BusinessObjects.Entities;
 using BookManagement.Services.DTOs.Auth;
+using BookManagement.Services.DTOs.Book;
 using BookManagement.Services.DTOs.User;
 using BookManagement.ViewModels.Auth;
 using BookManagement.ViewModels.Book;
@@ -34,6 +35,7 @@ namespace BookManagement.Mappings
             CreateMap<Book, BookViewModel>()
                 .ForMember(dest => dest.CategoryName, opt => opt.MapFrom(src => src.Category.Name))
                 .ForMember(dest => dest.ImageUrl, opt => opt.MapFrom(src => src.ImageUrl));
+            CreateMap<BookFilterViewModel, BookPagedQueryDto>().ReverseMap();
 
             // Order
             CreateMap<PurchaseViewModel, Order>()

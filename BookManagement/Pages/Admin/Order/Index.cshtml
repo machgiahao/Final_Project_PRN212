@@ -1,0 +1,170 @@
+﻿@page
+@using BookManagement.ViewModels.Order
+@model BookManagement.Pages.Admin.Order.IndexModel
+
+@{
+    ViewData["Title"] = "Order Management";
+    Layout = "_AdminLayout";
+    var statusOptions = new List<(int Value, string Text)>
+    {
+        (0, "Pending"),
+        (1, "Confirmed"),
+        (2, "Shipping"),
+        (3, "Completed"),
+        (4, "Cancelled")
+    };
+}
+@functions {
+    string BuildQueryString(int pageNumber, int? pageSize = null)
+    {
+        var query = new List<string> { $"Filter.PageNumber={pageNumber}" };
+        if (!string.IsNullOrWhiteSpace(Model.Filter.RecipientName))
+            query.Add($"Filter.RecipientName={Model.Filter.RecipientName}");
+        if (Model.Filter.Status.HasValue)
+            query.Add($"Filter.Status={Model.Filter.Status}");
+        if (pageSize.HasValue)
+            query.Add($"Filter.PageSize={pageSize.Value}");
+        else
+            query.Add($"Filter.PageSize={Model.Pagination.PageSize}");
+        return "?" + string.Join("&", query);
+    }
+}
+<link rel="stylesheet" href="~/css/User/index.css" />
+@if (TempData["Message"] != null)
+{
+    <div class="alert alert-success alert-dismissible fade show" role="alert">
+        @TempData["Message"]
+        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+    </div>
+}
+<div class="user-admin-outer">
+    <div class="user-admin-container">
+        <div class="filter-box">
+            <form method="get" class="filter-form">
+                <div class="filter-row">
+                    <div class="filter-group">
+                        <label>Recipient Name</label>
+                        <input type="text" name="Filter.RecipientName" value="@Model.Filter.RecipientName" autocomplete="off" />
+                    </div>
+                    <div class="filter-group">
+                        <label>Status</label>
+                        <select name="Filter.Status" class="form-select">
+                            <option value="">All Status</option>
+                            <option value="0" selected="@(Model.Filter.Status == 0 ? "selected" : null)">Pending</option>
+                            <option value="1" selected="@(Model.Filter.Status == 1 ? "selected" : null)">Confirmed</option>
+                            <option value="2" selected="@(Model.Filter.Status == 2 ? "selected" : null)">Shipping</option>
+                            <option value="3" selected="@(Model.Filter.Status == 3 ? "selected" : null)">Completed</option>
+                            <option value="4" selected="@(Model.Filter.Status == 4 ? "selected" : null)">Cancelled</option>
+                        </select>
+                    </div>
+                    <div class="filter-actions">
+                        <button type="submit" class="btn btn-primary">Search</button>
+                        <a href="/Admin/Order/Index" class="btn btn-light">Clear</a>
+                    </div>
+                </div>
+            </form>
+        </div>
+
+        <div class="table-box">
+            <div class="table-header">
+                <span>Table List Orders</span>
+            </div>
+            <table class="user-table">
+                <thead>
+                    <tr>
+                        <th>Order ID</th>
+                        <th>Customer</th>
+                        <th>Status</th>
+                        <th>Created At</th>
+                        <th>Total Price</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @if (Model.OrderViewModel != null && Model.OrderViewModel.Any())
+                    {
+                        foreach (var order in Model.OrderViewModel)
+                        {
+                            <tr>
+                                <td>
+                                    <span class="text-primary">@order.OrderId</span>
+                                </td>
+                                <td>@order.RecipientName</td>
+                                <td>
+                                    <form method="post" asp-page-handler="UpdateStatus" style="display:inline;">
+                                        <input type="hidden" name="orderId" value="@order.OrderId" />
+                                        @{
+                                            string statusClass = order.Status switch
+                                            {
+                                                0 => "order-status-select order-status-pending",
+                                                1 => "order-status-select order-status-confirmed",
+                                                2 => "order-status-select order-status-shipping",
+                                                3 => "order-status-select order-status-completed",
+                                                4 => "order-status-select order-status-cancelled",
+                                                _ => "order-status-select"
+                                            };
+                                        }
+                                        <select name="newStatus" class="@statusClass" onchange="this.form.submit();">
+                                            @foreach (var opt in statusOptions)
+                                            {
+                                                if (order.Status == opt.Value)
+                                                {
+                                                    <option value="@opt.Value" selected>@opt.Text</option>
+                                                }
+                                                else
+                                                {
+                                                    <option value="@opt.Value">@opt.Text</option>
+                                                }
+                                            }
+                                        </select>
+                                    </form>
+
+                                </td>
+
+                                <td>@order.OrderDate?.ToString("dd-MM-yyyy HH:mm:ss")</td>
+                                <td>@order.TotalPrice.ToString("N0")</td>
+                            </tr>
+                        }
+                    }
+                    else
+                    {
+                        <tr>
+                            <td colspan="5" class="text-center text-muted">No orders found.</td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+            <div class="table-footer">
+                @if (Model.Pagination.TotalPages > 1)
+                {
+                    <nav aria-label="Page navigation">
+                        <ul class="pagination justify-content-center mt-4">
+                            <li class="page-item @(Model.Pagination.CurrentPage == 1 ? "disabled" : "")">
+                                <a class="page-link" href="@BuildQueryString(Model.Pagination.CurrentPage - 1)">Previous</a>
+                            </li>
+                            @for (int i = 1; i <= Model.Pagination.TotalPages; i++)
+                            {
+                                <li class="page-item @(i == Model.Pagination.CurrentPage ? "active" : "")">
+                                    <a class="page-link" href="@BuildQueryString(i)">@i</a>
+                                </li>
+                            }
+                            <li class="page-item @(Model.Pagination.CurrentPage == Model.Pagination.TotalPages ? "disabled" : "")">
+                                <a class="page-link" href="@BuildQueryString(Model.Pagination.CurrentPage + 1)">Next</a>
+                            </li>
+                        </ul>
+                    </nav>
+                }
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <script>
+        setTimeout(function () {
+            document.querySelectorAll('.alert-dismissible').forEach(function(alert) {
+                var bsAlert = bootstrap.Alert.getOrCreateInstance(alert);
+                bsAlert.close();
+            });
+        }, 3000);
+    </script>
+}

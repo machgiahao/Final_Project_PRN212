@@ -57,6 +57,10 @@ namespace BookManagement.Pages.Auth
                     IsPersistent = true,
                     ExpiresUtc = DateTimeOffset.UtcNow.AddMinutes(20)
                 });
+                if(user.Role == "Admin")
+                {
+                    return RedirectToPage("/Admin/Dashboard/Index");
+                }
                 return RedirectToPage("/Index");
             }
             catch

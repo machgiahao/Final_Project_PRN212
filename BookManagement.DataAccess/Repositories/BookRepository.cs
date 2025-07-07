@@ -104,7 +104,7 @@ namespace BookManagement.DataAccess.Repositories
             }
         }
 
-        public async Task<PagedResult<Book>> GetBooksPagedAsync(int pageNumber, int pageSize, List<int> categoryIds = null, decimal? minPrice = null, decimal? maxPrice = null)
+        public async Task<PagedResult<Book>> GetBooksPagedAsync(int pageNumber, int pageSize, List<int> categoryIds = null, decimal? minPrice = null, decimal? maxPrice = null, string? title = null)
         {
             var query = _context.Books.Include(b => b.Category).AsQueryable();
 
@@ -120,6 +120,10 @@ namespace BookManagement.DataAccess.Repositories
             if (maxPrice.HasValue)
             {
                 query = query.Where(b => b.Price <= maxPrice.Value);
+            }
+            if(!string.IsNullOrEmpty(title))
+            {
+                query = query.Where(b => b.Title != null && b.Title.ToLower().Contains(title.ToLower()));
             }
 
             int totalCount = await query.CountAsync();

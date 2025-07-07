@@ -6,6 +6,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using BookManagement.BusinessObjects.Commons;
 
 namespace BookManagement.DataAccess.Repositories
 {
@@ -128,6 +129,42 @@ namespace BookManagement.DataAccess.Repositories
             catch (Exception ex)
             {
                 throw new Exception("An unexpected error occurred while deleting the order.", ex);
+            }
+        }
+
+        public async Task<PagedResult<Order>> GetAllOrdersAsync(int pageNumber, int pageSize, string? recipientName, int? status)
+        {
+            try
+            {
+                var query = _context.Orders.AsQueryable();
+
+                if (!string.IsNullOrEmpty(recipientName))
+                {
+                    query = query.Where(u => u.RecipientName.Contains(recipientName));
+                }
+                if (status != null)
+                {
+                    query = query.Where(u => u.Status == status);
+                }
+
+                var totalCount = await query.CountAsync();
+                var orders = await query
+                    .OrderByDescending(o => o.OrderDate)
+                    .Skip((pageNumber - 1) * pageSize)
+                    .Take(pageSize)
+                    .ToListAsync();
+
+                return new PagedResult<Order>
+                {
+                    Items = orders,
+                    TotalCount = totalCount,
+                    PageNumber = pageNumber,
+                    PageSize = pageSize
+                };
+            }
+            catch (Exception ex)
+            {
+                throw new Exception("An error occurred while retrieving all orders.", ex);
             }
         }
     }

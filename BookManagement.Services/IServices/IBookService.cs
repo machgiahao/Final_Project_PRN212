@@ -1,5 +1,6 @@
 ﻿using BookManagement.BusinessObjects.Commons;
 using BookManagement.BusinessObjects.Entities;
+using BookManagement.Services.DTOs.Book;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -15,8 +16,7 @@ namespace BookManagement.Services.IServices
         Task<IEnumerable<Book>> GetAllBooksAsync();
         Task UpdateBookAsync(Book book);
         Task DeleteBookAsync(int id);
-        Task<PagedResult<Book>> GetBooksPagedAsync(int pageNumber, int pageSize, List<int> categoryIds = null, decimal? minPrice = null,
-        decimal? maxPrice = null);
+        Task<PagedResult<Book>> GetBooksPagedAsync(BookPagedQueryDto queryDto);
 
     }
 }
