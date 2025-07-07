@@ -84,7 +84,8 @@
                     {
                         foreach (var order in Model.OrderViewModel)
                         {
-                            <tr>
+                            <tr style="cursor:pointer"
+                                onclick="window.location.href='@Url.Page("/Admin/Order/Detail", new { id = order.OrderId })'">
                                 <td>
                                     <span class="text-primary">@order.OrderId</span>
                                 </td>

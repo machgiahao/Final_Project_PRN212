@@ -338,3 +338,6 @@
     color: #cf1322;
     border-color: #ffa39e;
 }
+.user-table tbody tr:hover {
+    background: #f0f4ff;
+}
