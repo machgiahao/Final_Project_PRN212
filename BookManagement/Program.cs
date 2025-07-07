@@ -7,6 +7,7 @@ using BookManagement.Mappings;
 using Microsoft.AspNetCore.Authentication.Cookies;
 using BookManagement.DataAccess.Context;
 using Microsoft.EntityFrameworkCore;
+using BookManagement.SignalR;
 
 namespace BookManagement
 {
@@ -59,7 +60,7 @@ namespace BookManagement
                 });
             builder.Services.AddAuthorization();
             builder.Services.AddSession();
-
+            builder.Services.AddSignalR();
             var app = builder.Build();
 
             // Configure the HTTP request pipeline.
@@ -76,7 +77,7 @@ namespace BookManagement
             app.UseRouting();
 
             app.UseAuthorization();
-
+            app.MapHub<SignalRServer>("/signalRServer");
             app.MapRazorPages();
 
             app.Run();

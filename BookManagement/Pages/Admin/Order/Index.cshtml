@@ -91,7 +91,7 @@
                                 </td>
                                 <td>@order.RecipientName</td>
                                 <td>
-                                    <form method="post" asp-page-handler="UpdateStatus" style="display:inline;">
+                                    <form method="post" asp-page-handler="UpdateStatus" style="display:inline;" onclick="event.stopPropagation();">
                                         <input type="hidden" name="orderId" value="@order.OrderId" />
                                         @{
                                             string statusClass = order.Status switch
@@ -104,7 +104,7 @@
                                                 _ => "order-status-select"
                                             };
                                         }
-                                        <select name="newStatus" class="@statusClass" onchange="this.form.submit();">
+                                        <select name="newStatus" class="@statusClass" onchange="this.form.submit();" onclick="event.stopPropagation();">
                                             @foreach (var opt in statusOptions)
                                             {
                                                 if (order.Status == opt.Value)
@@ -118,12 +118,11 @@
                                             }
                                         </select>
                                     </form>
-
                                 </td>
-
                                 <td>@order.OrderDate?.ToString("dd-MM-yyyy HH:mm:ss")</td>
                                 <td>@order.TotalPrice.ToString("N0")</td>
                             </tr>
+
                         }
                     }
                     else

@@ -6,6 +6,10 @@ using AutoMapper;
 using BookManagement.ViewModels.Shared;
 using BookManagement.ViewModels.User;
 using BookManagement.Services.Services;
+using Microsoft.AspNetCore.SignalR;
+using BookManagement.SignalR;
+using BookManagement.BusinessObjects.Entities;
+using System.Security.Claims;
 
 namespace BookManagement.Pages.Admin.Order
 {
@@ -13,11 +17,13 @@ namespace BookManagement.Pages.Admin.Order
     {
         private readonly IOrderService _orderService;
         private readonly IMapper _mapper;
+        private readonly IHubContext<SignalRServer> _hubContext;
 
-        public IndexModel(IOrderService orderService, IMapper mapper)
+        public IndexModel(IOrderService orderService, IMapper mapper, IHubContext<SignalRServer> hubContext)
         {
             _orderService = orderService;
             _mapper = mapper;
+            _hubContext = hubContext;
         }
 
         public IList<OrderViewModel> OrderViewModel { get; set; }
@@ -48,10 +54,23 @@ namespace BookManagement.Pages.Admin.Order
             {
                 order.Status = newStatus;
                 await _orderService.UpdateOrderAsync(order);
+                await _hubContext.Clients.User(order.UserId).SendAsync("OrderStatusChanged", orderId, GetStatusText(newStatus));
                 TempData["Message"] = "Order status updated successfully.";
             }
             return RedirectToPage();
         }
 
+        private string GetStatusText(int status)
+        {
+            return status switch
+            {
+                0 => "Pending",
+                1 => "Confirmed",
+                2 => "Shipping",
+                3 => "Completed",
+                4 => "Cancelled",
+                _ => "Unknown"
+            };
+        }
     }
 }

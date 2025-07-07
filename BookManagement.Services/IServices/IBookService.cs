@@ -17,6 +17,7 @@ namespace BookManagement.Services.IServices
         Task UpdateBookAsync(Book book);
         Task DeleteBookAsync(int id);
         Task<PagedResult<Book>> GetBooksPagedAsync(BookPagedQueryDto queryDto);
+        Task UpdateBookStockAsync(int? bookId, int changeQuantity);
 
     }
 }

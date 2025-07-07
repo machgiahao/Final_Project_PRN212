@@ -95,5 +95,18 @@ namespace BookManagement.Services.Services
             }
         }
 
+
+        public async Task UpdateBookStockAsync(int? bookId, int changeQuantity)
+        {
+            try
+            {
+                await _bookRepository.UpdateBookStockAsync(bookId, changeQuantity);
+            }
+            catch (Exception ex)
+            {
+                throw new Exception("Error updating book stock.", ex);
+            }
+
+        }
     }
 }

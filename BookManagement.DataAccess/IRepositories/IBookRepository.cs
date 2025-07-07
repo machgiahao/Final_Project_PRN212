@@ -19,6 +19,7 @@ namespace BookManagement.DataAccess.IRepositories
         
         Task DeleteBookAsync(int id);
         Task<PagedResult<Book>> GetBooksPagedAsync(int pageNumber, int pageSize, List<int> categoryIds = null, decimal? minPrice = null, decimal? maxPrice = null, string? title = null);
+        Task UpdateBookStockAsync(int? bookId, int changeQuantity);
 
     }
 }
