@@ -1,4 +1,6 @@
-﻿namespace BookManagement.ViewModels.Book
+﻿using BookManagement.BusinessObjects.Enum;
+
+namespace BookManagement.ViewModels.Book
 {
     public class BookViewModel
     {
@@ -13,5 +15,7 @@
         public string? Author { get; set; }
         public string? ImageUrl { get; set; }
         public DateTime? CreatedAt { get; set; }
+        public BookStatus? Status { get; set; }
+        public string? StatusDisplay { get; set; }
     }
 }

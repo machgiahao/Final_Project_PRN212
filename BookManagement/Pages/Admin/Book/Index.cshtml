@@ -1,0 +1,114 @@
+﻿@page
+@model BookManagement.Pages.Admin.Book.IndexModel
+@{
+    ViewData["Title"] = "Book Management";
+    Layout = "_AdminLayout";
+}
+@functions {
+    string BuildQueryString(int pageNumber, int? pageSize = null)
+    {
+        var query = new List<string> { $"Filter.PageNumber={pageNumber}" };
+        if (Model.Filter.SelectedCategories != null && Model.Filter.SelectedCategories.Any())
+            query.Add($"Filter.SelectedCategories={string.Join(",", Model.Filter.SelectedCategories)}");
+        if (Model.Filter.MinPrice.HasValue)
+            query.Add($"Filter.MinPrice={Model.Filter.MinPrice.Value}");
+        if (Model.Filter.MaxPrice.HasValue)
+            query.Add($"Filter.MaxPrice={Model.Filter.MaxPrice.Value}");
+        if (pageSize.HasValue)
+            query.Add($"Filter.PageSize={pageSize.Value}");
+        else
+            query.Add($"Filter.PageSize={Model.Pagination.PageSize}");
+        return "?" + string.Join("&", query);
+    }
+}
+<link rel="stylesheet" href="~/css/Dashboard/bookManagement.css" />
+
+<div class="book-admin-outer">
+    <div class="book-admin-container">
+        <div class="table-box">
+            <div class="table-header">
+                <span>Book Management</span>
+                <a asp-page="./Create" class="btn btn-primary ms-2 create-btn">
+                    <i class="bi bi-plus-circle me-1"></i> Create New
+                </a>
+            </div>
+            <div class="table-responsive">
+                <table class="user-table">
+                    <thead>
+                        <tr>
+                            <th>Image</th>
+                            <th>Title</th>
+                            <th>Author</th>
+                            <th>Category</th>
+                            <th>Price</th>
+                            <th>Stock</th>
+                            <th>Sold</th>
+                            <th>Status</th>
+                            <th>Created At</th>
+                            <th>Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @foreach (var book in Model.BookViewModel)
+                        {
+                            <tr>
+                                <td>
+                                    @if (!string.IsNullOrEmpty(book.ImageUrl))
+                                    {
+                                        <img src="@book.ImageUrl" alt="Book Image" class="img-thumbnail" style="max-width:60px;max-height:80px;" />
+                                    }
+                                </td>
+                                <td>@book.Title</td>
+                                <td>@book.Author</td>
+                                <td>@book.CategoryName</td>
+                                <td>@book.Price?.ToString("C")</td>
+                                <td>@book.Stock</td>
+                                <td>@book.Sold</td>
+                                <td>
+                                    @if (book.StatusDisplay == "Available")
+                                    {
+                                        <span class="badge badge-status-available">Available</span>
+                                    }
+                                    else if (book.StatusDisplay == "Sold Out")
+                                    {
+                                        <span class="badge badge-status-soldout">Sold Out</span>
+                                    }
+                                    else if (book.StatusDisplay == "Hidden")
+                                    {
+                                        <span class="badge badge-status-hide">Hidden</span>
+                                    }
+                                </td>
+                                <td>@book.CreatedAt?.ToString("yyyy-MM-dd")</td>
+                                <td>
+                                    <a asp-page="./Edit" asp-route-id="@book.BookId" class="btn btn-sm btn-primary">Edit</a>
+                                    <a asp-page="./Delete" asp-route-id="@book.BookId" class="btn btn-sm btn-danger">Delete</a>
+                                </td>
+                            </tr>
+                        }
+                    </tbody>
+                </table>
+            </div>
+            <div class="table-footer">
+                @if (Model.Pagination.TotalPages > 1)
+                {
+                    <nav aria-label="Page navigation">
+                        <ul class="pagination justify-content-center mt-4">
+                            <li class="page-item @(Model.Pagination.CurrentPage == 1 ? "disabled" : "")">
+                                <a class="page-link" href="@BuildQueryString(Model.Pagination.CurrentPage - 1)">Previous</a>
+                            </li>
+                            @for (int i = 1; i <= Model.Pagination.TotalPages; i++)
+                            {
+                                <li class="page-item @(i == Model.Pagination.CurrentPage ? "active" : "")">
+                                    <a class="page-link" href="@BuildQueryString(i)">@i</a>
+                                </li>
+                            }
+                            <li class="page-item @(Model.Pagination.CurrentPage == Model.Pagination.TotalPages ? "disabled" : "")">
+                                <a class="page-link" href="@BuildQueryString(Model.Pagination.CurrentPage + 1)">Next</a>
+                            </li>
+                        </ul>
+                    </nav>
+                }
+            </div>
+        </div>
+    </div>
+</div>

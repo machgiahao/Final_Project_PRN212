@@ -1,5 +1,6 @@
 ﻿using AutoMapper;
 using BookManagement.BusinessObjects.Entities;
+using BookManagement.BusinessObjects.Enum;
 using BookManagement.Services.DTOs.Auth;
 using BookManagement.Services.DTOs.User;
 using BookManagement.ViewModels.Auth;
@@ -33,7 +34,12 @@ namespace BookManagement.Mappings
             // Book 
             CreateMap<Book, BookViewModel>()
                 .ForMember(dest => dest.CategoryName, opt => opt.MapFrom(src => src.Category.Name))
-                .ForMember(dest => dest.ImageUrl, opt => opt.MapFrom(src => src.ImageUrl));
+                .ForMember(dest => dest.ImageUrl, opt => opt.MapFrom(src => src.ImageUrl))
+                .ForMember(dest => dest.StatusDisplay, opt => opt.MapFrom(src =>
+                    src.Status == BookStatus.Avaiable ? "Available" :
+                    src.Status == BookStatus.SoldOut ? "Sold Out" :
+                    src.Status == BookStatus.Hide ? "Hidden" : "Unknown"
+                ));
 
             // Order
             CreateMap<PurchaseViewModel, Order>()
