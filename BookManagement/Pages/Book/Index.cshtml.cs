@@ -1,4 +1,6 @@
+using AutoMapper;
 using BookManagement.BusinessObjects.Entities;
+using BookManagement.Services.DTOs.Book;
 using BookManagement.Services.IServices;
 using BookManagement.ViewModels.Book;
 using BookManagement.ViewModels.Shared;
@@ -11,11 +13,12 @@ namespace BookManagement.Pages.Book
     {
         private readonly IBookService _bookService;
         private readonly ICategoryService _categoryService;
-
-        public IndexModel(IBookService bookService, ICategoryService categoryService)
+        private readonly IMapper _mapper;
+        public IndexModel(IBookService bookService, ICategoryService categoryService, IMapper mapper)
         {
             _bookService = bookService;
             _categoryService = categoryService;
+            _mapper = mapper;
         }
 
         public List<BookManagement.BusinessObjects.Entities.Book> Books { get; set; } = new();
@@ -26,12 +29,8 @@ namespace BookManagement.Pages.Book
         public BookFilterViewModel Filter { get; set; } = new();
         public async Task OnGetAsync(int pageNumber = 1)
         {
-            var pagedResult = await _bookService.GetBooksPagedAsync(
-                        Filter.PageNumber,
-                        Filter.PageSize,
-                        Filter.SelectedCategories,
-                        Filter.MinPrice,
-                        Filter.MaxPrice);
+            var filter = _mapper.Map<BookPagedQueryDto>(Filter);
+            var pagedResult = await _bookService.GetBooksPagedAsync(filter);
 
             Books = pagedResult.Items.ToList();
 

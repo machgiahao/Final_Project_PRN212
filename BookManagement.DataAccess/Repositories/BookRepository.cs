@@ -104,7 +104,7 @@ namespace BookManagement.DataAccess.Repositories
             }
         }
 
-        public async Task<PagedResult<Book>> GetBooksPagedAsync(int pageNumber, int pageSize, List<int> categoryIds = null, decimal? minPrice = null, decimal? maxPrice = null)
+        public async Task<PagedResult<Book>> GetBooksPagedAsync(int pageNumber, int pageSize, List<int> categoryIds = null, decimal? minPrice = null, decimal? maxPrice = null, string? title = null)
         {
             var query = _context.Books.Include(b => b.Category).AsQueryable();
 
@@ -120,6 +120,10 @@ namespace BookManagement.DataAccess.Repositories
             if (maxPrice.HasValue)
             {
                 query = query.Where(b => b.Price <= maxPrice.Value);
+            }
+            if(!string.IsNullOrEmpty(title))
+            {
+                query = query.Where(b => b.Title != null && b.Title.ToLower().Contains(title.ToLower()));
             }
 
             int totalCount = await query.CountAsync();
@@ -137,5 +141,39 @@ namespace BookManagement.DataAccess.Repositories
                 PageSize = pageSize
             };
         }
+
+        public async Task UpdateBookStockAsync(int? bookId, int changeQuantity)
+        {
+            try
+            {
+                var book = await _context.Books.FindAsync(bookId);
+                if (book == null)
+                {
+                    throw new KeyNotFoundException($"Book with ID {bookId} not found.");
+                }
+                book.Stock += changeQuantity;
+
+                if (book.Stock < 0)
+                {
+                    book.Stock = 0; 
+                }
+                if (changeQuantity < 0)
+                {
+                    if (book.Sold == null) book.Sold = 0;
+                    book.Sold += Math.Abs(changeQuantity);
+                }
+                _context.Books.Update(book);
+                await _context.SaveChangesAsync();
+            }
+            catch (DbUpdateException ex)
+            {
+                throw new Exception("An error occurred while updating the book stock in the database.", ex);
+            }
+            catch (Exception ex)
+            {
+                throw new Exception("An unexpected error occurred while updating the book stock.", ex);
+            }
+        }
+
     }
 }

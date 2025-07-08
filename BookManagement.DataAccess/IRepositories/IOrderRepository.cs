@@ -1,4 +1,5 @@
-﻿using BookManagement.BusinessObjects.Entities;
+﻿using BookManagement.BusinessObjects.Commons;
+using BookManagement.BusinessObjects.Entities;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 
@@ -12,5 +13,7 @@ namespace BookManagement.DataAccess.IRepositories
         Task<IEnumerable<Order>> GetOrdersByUserIdAsync(string userId);
         Task UpdateOrderAsync(Order order);
         Task DeleteOrderAsync(int id);
+        Task<PagedResult<Order>> GetAllOrdersAsync(int pageNumber, int pageSize, string?recipientName, int? status);
+
     }
 }

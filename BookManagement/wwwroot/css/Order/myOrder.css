@@ -338,7 +338,7 @@ body {
 .order-total {
     font-size: 1.2rem;
     font-weight: bold;
-    color: #ea4335;
+    color: #7DDA58;
     letter-spacing: 0.5px;
     background: white;
     padding: 0.7rem 2rem;
@@ -357,7 +357,7 @@ body {
 
     .order-total i {
         margin-right: 10px;
-        color: #fbbc05;
+        color: #7DDA58;
         font-size: 1.2em;
         animation: float 3s ease-in-out infinite;
     }

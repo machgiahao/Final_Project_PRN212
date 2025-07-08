@@ -1,6 +1,7 @@
 ﻿using AutoMapper;
 using BookManagement.BusinessObjects.Entities;
 using BookManagement.Services.IServices;
+using BookManagement.Services.Services;
 using BookManagement.ViewModels.Cart;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
@@ -13,13 +14,15 @@ namespace BookManagement.Pages.Cart
         private readonly ICartService _cartService;
         private readonly IOrderService _orderService;
         private readonly IOrderDetailService _orderDetailService;
+        private readonly IBookService _bookService;
         private readonly IMapper _mapper;
-        public PurchaseModel(ICartService cartService, IOrderService orderService, IOrderDetailService orderDetailService , IMapper mapper)
+        public PurchaseModel(ICartService cartService, IOrderService orderService, IOrderDetailService orderDetailService , IMapper mapper, IBookService bookService)
         {
             _cartService = cartService;
             _orderService = orderService;
             _orderDetailService = orderDetailService;
             _mapper = mapper;
+            _bookService = bookService;
         }
 
         [BindProperty]
@@ -87,6 +90,7 @@ namespace BookManagement.Pages.Cart
                     UnitPrice = item.Book.Price.GetValueOrDefault()
                 };
                 await _orderDetailService.AddOrderDetailAsync(orderDetail);
+                await _bookService.UpdateBookStockAsync(item.BookId, -item.Quantity);
             }
 
             // Xóa các item đã thanh toán khỏi cart

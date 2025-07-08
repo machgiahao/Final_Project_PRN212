@@ -75,6 +75,31 @@
         <div class="col-md-9">
             <div class="card">
                 <div class="card-body">
+                    <form method="get" class="mb-3 d-flex" style="max-width: 400px;">
+                        <input type="text"
+                               name="Filter.Title"
+                               class="form-control me-2"
+                               placeholder="Search by book title..."
+                               value="@(Model.Filter.Title ?? "")" />
+                        <button type="submit" class="btn btn-outline-primary">Search</button>
+                        @* Preserve other filters as hidden fields *@
+                        @if (Model.Filter.SelectedCategories != null)
+                        {
+                            foreach (var cat in Model.Filter.SelectedCategories)
+                            {
+                                <input type="hidden" name="Filter.SelectedCategories" value="@cat" />
+                            }
+                        }
+                        @if (Model.Filter.MinPrice.HasValue)
+                        {
+                            <input type="hidden" name="Filter.MinPrice" value="@Model.Filter.MinPrice" />
+                        }
+                        @if (Model.Filter.MaxPrice.HasValue)
+                        {
+                            <input type="hidden" name="Filter.MaxPrice" value="@Model.Filter.MaxPrice" />
+                        }
+                    </form>
+
                     <!-- Book Cards -->
                     <div class="row row-cols-1 row-cols-sm-2 row-cols-md-3 row-cols-lg-5 g-3">
                         @if (Model.Books != null && Model.Books.Any())

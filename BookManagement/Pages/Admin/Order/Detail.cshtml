@@ -1,0 +1,174 @@
+﻿@page "{id:int}"
+@model BookManagement.Pages.Admin.Order.DetailModel
+@{
+    ViewData["Title"] = "Order Detail";
+    Layout = "_AdminLayout";
+}
+<link rel="stylesheet" href="~/css/User/index.css" />
+
+<style>
+    .order-detail-card {
+        background: #fff;
+        border-radius: 18px;
+        box-shadow: 0 2px 16px rgba(58,134,255,0.08);
+        padding: 32px 32px 24px 32px;
+        max-width: 900px;
+        margin: 32px auto 0 auto;
+    }
+
+    .order-detail-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 18px;
+    }
+
+    .order-detail-title {
+        font-size: 1.3rem;
+        font-weight: 600;
+        color: #3a86ff;
+        letter-spacing: 1px;
+    }
+
+    .order-detail-info {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 12px 32px;
+        margin-bottom: 18px;
+    }
+
+        .order-detail-info strong {
+            color: #22223b;
+        }
+
+    .order-status-badge {
+        padding: 4px 16px;
+        border-radius: 12px;
+        font-size: 1rem;
+        font-weight: 500;
+        display: inline-block;
+    }
+
+    .order-status-0 {
+        background: #fffbe6;
+        color: #d4a100;
+    }
+
+    .order-status-1 {
+        background: #e0e7ff;
+        color: #3a86ff;
+    }
+
+    .order-status-2 {
+        background: #e0f7fa;
+        color: #0097a7;
+    }
+
+    .order-status-3 {
+        background: #e0ffe7;
+        color: #43aa8b;
+    }
+
+    .order-status-4 {
+        background: #ffeaea;
+        color: #e63946;
+    }
+
+    .order-items-card {
+        background: #f8fafc;
+        border-radius: 14px;
+        box-shadow: 0 1px 8px rgba(58,134,255,0.04);
+        padding: 18px 18px 8px 18px;
+        margin-top: 18px;
+    }
+
+    .order-items-title {
+        font-size: 1.08rem;
+        font-weight: 600;
+        color: #3a86ff;
+        margin-bottom: 10px;
+    }
+
+    .order-back-btn {
+        min-width: 120px;
+        border-radius: 8px;
+        background: #f0f4fa;
+        color: #3a86ff;
+        border: 1px solid #e0e7ff;
+        font-weight: 500;
+        transition: background 0.2s;
+    }
+
+        .order-back-btn:hover {
+            background: #e0e7ff;
+            color: #22223b;
+        }
+</style>
+
+<div class="order-detail-card">
+    <div class="order-detail-header">
+        <div class="order-detail-title">
+            <i class="fa-solid fa-receipt"></i> Order Detail - #@Model.Order?.OrderId
+        </div>
+        <a href="/Admin/Order/Index" class="btn order-back-btn">Back to List</a>
+    </div>
+    @if (Model.Order == null)
+    {
+        <div class="alert alert-danger mt-4">Order not found.</div>
+    }
+    else
+    {
+        <div class="order-detail-info">
+            <div><strong>Recipient Name:</strong> @Model.Order.RecipientName</div>
+            <div>
+                <strong>Status:</strong>
+                <span class="order-status-badge order-status-@Model.Order.Status">
+                    @Model.Order.StatusText
+                </span>
+            </div>
+            <div><strong>Order Date:</strong> @Model.Order.OrderDate?.ToString("dd-MM-yyyy HH:mm:ss")</div>
+            <div><strong>Total Price:</strong> @Model.Order.TotalPrice.ToString("N0") đ</div>
+            <div><strong>Shipping Address:</strong> @Model.Order.ShippingAddress</div>
+            <div><strong>Phone:</strong> @Model.Order.PhoneNumber</div>
+        </div>
+        <div class="order-items-card">
+            <div class="order-items-title"><i class="fa-solid fa-box"></i> Order Items</div>
+            <div class="table-responsive">
+                <table class="user-table">
+                    <thead>
+                        <tr>
+                            <th>#</th>
+                            <th>Book Title</th>
+                            <th>Quantity</th>
+                            <th>Unit Price</th>
+                            <th>Total</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @if (Model.Order.OrderDetails != null && Model.Order.OrderDetails.Any())
+                        {
+                            int idx = 1;
+                            foreach (var item in Model.Order.OrderDetails)
+                            {
+                                <tr>
+                                    <td>@idx</td>
+                                    <td>@item.Book?.Title</td>
+                                    <td>@item.Quantity</td>
+                                    <td>@item.UnitPrice.ToString("N0") đ</td>
+                                    <td>@((item.Quantity * item.UnitPrice).ToString("N0")) đ</td>
+                                </tr>
+                                idx++;
+                            }
+                        }
+                        else
+                        {
+                            <tr>
+                                <td colspan="5" class="text-center text-muted">No items found.</td>
+                            </tr>
+                        }
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    }
+</div>

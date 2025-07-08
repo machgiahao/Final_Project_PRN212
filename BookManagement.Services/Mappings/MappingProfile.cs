@@ -2,6 +2,7 @@
 using BookManagement.BusinessObjects.Commons;
 using BookManagement.BusinessObjects.Entities;
 using BookManagement.Services.DTOs.Auth;
+using BookManagement.Services.DTOs.Book;
 using BookManagement.Services.DTOs.User;
 using System;
 using System.Collections.Generic;
@@ -24,6 +25,7 @@ namespace BookManagement.Services.Mappings
             CreateMap<User, CreateUserDto>().ReverseMap();
             CreateMap<User, UserUpdateDto>().ReverseMap();
             CreateMap(typeof(PagedResult<UserDto>), typeof(PagedResult<User>)).ReverseMap();
+
         }
     }
 }

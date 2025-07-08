@@ -1,6 +1,7 @@
 ﻿using BookManagement.BusinessObjects.Commons;
 using BookManagement.BusinessObjects.Entities;
 using BookManagement.DataAccess.IRepositories;
+using BookManagement.Services.DTOs.Book;
 using BookManagement.Services.IServices;
 using System;
 using System.Collections.Generic;
@@ -81,11 +82,11 @@ namespace BookManagement.Services.Services
                 throw new Exception("Error deleting book.", ex);
             }
         }
-        public async Task<PagedResult<Book>> GetBooksPagedAsync(int pageNumber, int pageSize, List<int> categoryIds = null, decimal? minPrice = null, decimal? maxPrice = null)
+        public async Task<PagedResult<Book>> GetBooksPagedAsync(BookPagedQueryDto queryDto)
         {
             try
             {
-                return await _bookRepository.GetBooksPagedAsync(pageNumber, pageSize, categoryIds, minPrice, maxPrice);
+                return await _bookRepository.GetBooksPagedAsync(queryDto.PageNumber, queryDto.PageSize, queryDto.SelectedCategories, queryDto.MinPrice, queryDto.MaxPrice, queryDto.Title);
 
             }
             catch (Exception ex)
@@ -94,5 +95,18 @@ namespace BookManagement.Services.Services
             }
         }
 
+
+        public async Task UpdateBookStockAsync(int? bookId, int changeQuantity)
+        {
+            try
+            {
+                await _bookRepository.UpdateBookStockAsync(bookId, changeQuantity);
+            }
+            catch (Exception ex)
+            {
+                throw new Exception("Error updating book stock.", ex);
+            }
+
+        }
     }
 }

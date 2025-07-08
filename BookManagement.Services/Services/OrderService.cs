@@ -6,6 +6,8 @@ using System.Text;
 using System.Threading.Tasks;
 using BookManagement.BusinessObjects.Entities;
 using BookManagement.DataAccess.IRepositories;
+using BookManagement.Services.DTOs.Order;
+using BookManagement.BusinessObjects.Commons;
 
 namespace BookManagement.Services.Services
 {
@@ -40,5 +42,11 @@ namespace BookManagement.Services.Services
         {
             await _orderRepository.DeleteOrderAsync(id);
         }
+
+        public async Task<PagedResult<Order>> GetAllOrdersAsync(int pageNumber, int pageSize, string? recipientName, int? status)
+        {
+            return await _orderRepository.GetAllOrdersAsync(pageNumber, pageSize, recipientName, status);
+        }
+
     }
 }
