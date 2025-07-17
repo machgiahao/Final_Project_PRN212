@@ -61,7 +61,7 @@
                                 <td>@book.Title</td>
                                 <td>@book.Author</td>
                                 <td>@book.CategoryName</td>
-                                <td>@book.Price?.ToString("C")</td>
+                                <td>@book.Price?.ToString("N0") đ</td>
                                 <td>@book.Stock</td>
                                 <td>@book.Sold</td>
                                 <td>
@@ -80,8 +80,17 @@
                                 </td>
                                 <td>@book.CreatedAt?.ToString("yyyy-MM-dd")</td>
                                 <td>
-                                    <a asp-page="./Edit" asp-route-id="@book.BookId" class="btn btn-sm btn-primary">Edit</a>
-                                    <a asp-page="./Delete" asp-route-id="@book.BookId" class="btn btn-sm btn-danger">Delete</a>
+                                    <button type="button"
+                                            class="icon-btn delete-btn"
+                                            title="Delete"
+                                            data-bs-toggle="modal"
+                                            data-bs-target="#deleteModal-@book.BookId"
+                                            onclick="event.stopPropagation();">
+                                        <i class="bi bi-trash"></i>
+                                    </button>
+                                    <a asp-page-handler="Edit" asp-route-id="@book.BookId" class="icon-btn edit-btn me-2" title="Edit" onclick="event.stopPropagation();">
+                                        <i class="bi bi-pencil"></i>
+                                    </a>
                                 </td>
                             </tr>
                         }

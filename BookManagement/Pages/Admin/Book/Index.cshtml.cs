@@ -5,6 +5,8 @@ using BookManagement.ViewModels.Book;
 using BookManagement.ViewModels.Shared;
 using Microsoft.AspNetCore.Authorization;
 using AutoMapper;
+using BookManagement.BusinessObjects.Entities;
+using BookManagement.Services.DTOs.Book;
 
 namespace BookManagement.Pages.Admin.Book
 {
@@ -12,37 +14,38 @@ namespace BookManagement.Pages.Admin.Book
     public class IndexModel : PageModel
     {
         private readonly IBookService _bookService;
+        private readonly ICategoryService _categoryService;
         private readonly IMapper _mapper;
-
-        public IndexModel(IBookService bookService, IMapper mapper)
+        public IndexModel(IBookService bookService, ICategoryService categoryService, IMapper mapper)
         {
             _bookService = bookService;
+            _categoryService = categoryService;
             _mapper = mapper;
         }
 
-        public IList<BookViewModel> BookViewModel { get; set; } = default!;
+        public List<BookManagement.BusinessObjects.Entities.Book> Books { get; set; } = new();
+        public List<Category> Categories { get; set; } = new();
         public PaginationViewModel Pagination { get; set; } = new();
+        public IList<BookViewModel> BookViewModel { get; private set; }
         [BindProperty(SupportsGet = true)]
-        public BookFilterViewModel Filter { get; set; } = new BookFilterViewModel();
+        public BookFilterViewModel Filter { get; set; } = new();
 
         public async Task OnGetAsync(int pageNumber = 1)
         {
-            var books = await _bookService.GetBooksPagedAsync(
-                Filter.PageNumber,
-                Filter.PageSize,
-                Filter.SelectedCategories,
-                Filter.MinPrice,
-                Filter.MaxPrice);
+            var filter = _mapper.Map<BookPagedQueryDto>(Filter);
+            var pagedResult = await _bookService.GetBooksPagedAsync(filter);
+
+            Books = pagedResult.Items.ToList();
 
             Pagination = new PaginationViewModel
             {
                 CurrentPage = Filter.PageNumber,
                 PageSize = Filter.PageSize,
-                TotalCount = books.TotalCount, 
-                TotalPages = (int)Math.Ceiling((double)books.TotalCount / Filter.PageSize) 
+                TotalCount = pagedResult.TotalCount,
+                TotalPages = (int)Math.Ceiling((double)pagedResult.TotalCount / Filter.PageSize)
             };
 
-            BookViewModel = _mapper.Map<IList<BookViewModel>>(books.Items.ToList());
+            BookViewModel = _mapper.Map<IList<BookViewModel>>(Books);
         }
     }
 }
