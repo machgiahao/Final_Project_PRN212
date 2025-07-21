@@ -128,7 +128,7 @@ namespace BookManagement.DataAccess.Repositories
             }
             if(role != "Admin")
             {
-                query = query.Where(b => b.Status == BookStatus.Avaiable || b.Status == BookStatus.SoldOut);
+                query = query.Where(b => b.Status == BookStatus.Avaiable);
             }
 
             int totalCount = await query.CountAsync();
