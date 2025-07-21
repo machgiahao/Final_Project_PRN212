@@ -14,5 +14,6 @@ namespace BookManagement.Services.DTOs.Book
         public decimal? MinPrice { get; set; }
         public decimal? MaxPrice { get; set; }
         public string? Title { get; set; }
+        public string? Role { get; set; }
     }
 }

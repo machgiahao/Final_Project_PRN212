@@ -29,6 +29,7 @@ namespace BookManagement.Pages.Book
         public BookFilterViewModel Filter { get; set; } = new();
         public async Task OnGetAsync(int pageNumber = 1)
         {
+            Filter.Role = "Customer";
             var filter = _mapper.Map<BookPagedQueryDto>(Filter);
             var pagedResult = await _bookService.GetBooksPagedAsync(filter);
 

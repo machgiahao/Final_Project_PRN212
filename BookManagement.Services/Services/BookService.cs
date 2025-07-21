@@ -86,15 +86,14 @@ namespace BookManagement.Services.Services
         {
             try
             {
-                return await _bookRepository.GetBooksPagedAsync(queryDto.PageNumber, queryDto.PageSize, queryDto.SelectedCategories, queryDto.MinPrice, queryDto.MaxPrice, queryDto.Title);
-
+                return await _bookRepository.GetBooksPagedAsync(queryDto.PageNumber, queryDto.PageSize, queryDto.SelectedCategories, queryDto.MinPrice, queryDto.MaxPrice, queryDto.Title, queryDto.Role);
             }
             catch (Exception ex)
             {
                 throw new Exception("Error retrieving paged books.", ex);
             }
         }
-
+            
 
         public async Task UpdateBookStockAsync(int? bookId, int changeQuantity)
         {

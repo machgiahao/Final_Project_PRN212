@@ -32,6 +32,8 @@ namespace BookManagement.Pages.Admin.Book
 
         public async Task OnGetAsync(int pageNumber = 1)
         {
+            Filter.Role = "Admin";
+
             var filter = _mapper.Map<BookPagedQueryDto>(Filter);
             var pagedResult = await _bookService.GetBooksPagedAsync(filter);
 

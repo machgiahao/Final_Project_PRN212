@@ -7,6 +7,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using BookManagement.DataAccess.Context;
 using BookManagement.BusinessObjects.Commons;
+using BookManagement.BusinessObjects.Enum;
 
 
 namespace BookManagement.DataAccess.Repositories
@@ -104,7 +105,7 @@ namespace BookManagement.DataAccess.Repositories
             }
         }
 
-        public async Task<PagedResult<Book>> GetBooksPagedAsync(int pageNumber, int pageSize, List<int> categoryIds = null, decimal? minPrice = null, decimal? maxPrice = null, string? title = null)
+        public async Task<PagedResult<Book>> GetBooksPagedAsync(int pageNumber, int pageSize, List<int> categoryIds = null, decimal? minPrice = null, decimal? maxPrice = null, string? title = null, string? role = null)
         {
             var query = _context.Books.Include(b => b.Category).AsQueryable();
 
@@ -124,6 +125,10 @@ namespace BookManagement.DataAccess.Repositories
             if(!string.IsNullOrEmpty(title))
             {
                 query = query.Where(b => b.Title != null && b.Title.ToLower().Contains(title.ToLower()));
+            }
+            if(role != "Admin")
+            {
+                query = query.Where(b => b.Status == BookStatus.Avaiable || b.Status == BookStatus.SoldOut);
             }
 
             int totalCount = await query.CountAsync();
