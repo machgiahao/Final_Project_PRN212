@@ -183,7 +183,9 @@
             <a asp-page="/Auth/Register">Create an account</a>
             <span>Or login with</span>
             <div class="social-login">
-                <button class="social-btn google" type="button" title="Login with Google"><i class="fab fa-google"></i></button>
+                <a class="social-btn google" title="Login with Google" asp-page-handler="GoogleLogin">
+                    <i class="fab fa-google"></i>
+                </a>
             </div>
         </div>
     </div>

@@ -8,7 +8,7 @@ using Microsoft.AspNetCore.Authentication.Cookies;
 using BookManagement.DataAccess.Context;
 using Microsoft.EntityFrameworkCore;
 using BookManagement.SignalR;
-
+using System.Configuration;
 namespace BookManagement
 {
     public class Program
@@ -58,6 +58,19 @@ namespace BookManagement
                     options.LoginPath = "/Auth/Login";
                     options.AccessDeniedPath = "/Auth/AccessDenied";
                 });
+
+            // Configure Login google
+            builder.Services.AddAuthentication()
+                .AddGoogle(googleOptions =>
+                {
+                    IConfigurationSection googleAuthNSection = builder.Configuration.GetSection("Authentication:Google");
+
+                    googleOptions.ClientId = googleAuthNSection["ClientId"];
+                    googleOptions.ClientSecret = googleAuthNSection["ClientSecret"];
+                    googleOptions.CallbackPath = "/login-google";
+
+                });
+
             builder.Services.AddAuthorization();
             builder.Services.AddSession();
             builder.Services.AddSignalR();

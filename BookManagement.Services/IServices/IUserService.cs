@@ -19,5 +19,6 @@ namespace BookManagement.Services.IServices
         Task<UserDto> CreateAsync(CreateUserDto userDto);
         Task<bool> UpdateAsync(string id, UserUpdateDto updateDto);
         Task<bool> DeleteAsync(string id);
+        Task<UserDto?> LoginGoogleAsync(string email, string? name);
     }
 }

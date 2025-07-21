@@ -135,5 +135,25 @@ namespace BookManagement.Services.Services
                 throw new InvalidOperationException($"Error deleting user '{id}': {ex.Message}", ex);
             }
         }
+
+        public async Task<UserDto?> LoginGoogleAsync(string email, string? name)
+        {
+            var user = await _userRepo.GetUserByEmailAsync(email);
+            if (user == null)
+            {
+                user = new User
+                {
+                    UserId = Guid.NewGuid().ToString(),
+                    Email = email,
+                    FullName = name,
+                    CreatedAt = DateTime.UtcNow,
+                    PasswordHash = "",
+                    Role = "Customer"
+                };
+                await _userRepo.AddUserAsync(user);
+            }
+            var userDto = _mapper.Map<UserDto>(user);
+            return userDto;
+        }
     }
 }
