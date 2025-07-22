@@ -1,5 +1,6 @@
 using AutoMapper;
 using BookManagement.Services.DTOs.Auth;
+using BookManagement.Services.DTOs.User;
 using BookManagement.Services.IServices;
 using BookManagement.ViewModels.Auth;
 using Microsoft.AspNetCore.Authentication;
@@ -42,22 +43,8 @@ namespace BookManagement.Pages.Auth
                     ErrorMessage = "Invalid email or password.";
                     return Page();
                 }
-                var claims = new List<Claim>
-            {
-                new Claim(ClaimTypes.NameIdentifier, user.UserId),
-                new Claim(ClaimTypes.Name, user.FullName ?? ""),
-                new Claim(ClaimTypes.Role, user.Role ?? "")
-            };
-
-                var identity = new ClaimsIdentity(claims, CookieAuthenticationDefaults.AuthenticationScheme);
-                var principal = new ClaimsPrincipal(identity);
-
-                await HttpContext.SignInAsync(CookieAuthenticationDefaults.AuthenticationScheme, principal, new AuthenticationProperties
-                {
-                    IsPersistent = true,
-                    ExpiresUtc = DateTimeOffset.UtcNow.AddMinutes(20)
-                });
-                if(user.Role == "Admin")
+                await SignInUserAsync(user);
+                if (user.Role == "Admin")
                 {
                     return RedirectToPage("/Admin/Dashboard/Index");
                 }
@@ -68,8 +55,43 @@ namespace BookManagement.Pages.Auth
                 ErrorMessage = "Invalid email or password.";
                 return Page();
             }
-
-
         }
+
+        public IActionResult OnGetGoogleLogin()
+        {
+            var redirectUrl = Url.Page("/Auth/Login", "GoogleCallback");
+            var properties = new AuthenticationProperties { RedirectUri = redirectUrl };
+            return Challenge(properties, "Google");
+        }
+        public async Task<IActionResult> OnGetGoogleCallbackAsync()
+        {
+            var result = await HttpContext.AuthenticateAsync();
+            var email = result.Principal.FindFirst(ClaimTypes.Email)?.Value;
+            var name = result.Principal.FindFirst(ClaimTypes.Name)?.Value;
+
+            var user = await _userService.LoginGoogleAsync(email, name);
+            await SignInUserAsync(user);
+            return RedirectToPage("/Index");
+        }
+
+        private async Task SignInUserAsync(UserDto user)
+        {
+            var claims = new List<Claim>
+            {
+                new Claim(ClaimTypes.NameIdentifier, user.UserId),
+                new Claim(ClaimTypes.Name, user.FullName ?? ""),
+                new Claim(ClaimTypes.Email, user.Email ?? ""),
+                new Claim(ClaimTypes.Role, user.Role ?? "")
+            };
+            var identity = new ClaimsIdentity(claims, CookieAuthenticationDefaults.AuthenticationScheme);
+            var principal = new ClaimsPrincipal(identity);
+
+            await HttpContext.SignInAsync(CookieAuthenticationDefaults.AuthenticationScheme, principal, new AuthenticationProperties
+            {
+                IsPersistent = true,
+                ExpiresUtc = DateTimeOffset.UtcNow.AddMinutes(20)
+            });
+        }
+
     }
 }
