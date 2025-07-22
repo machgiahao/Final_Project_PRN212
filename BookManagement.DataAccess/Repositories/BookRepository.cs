@@ -21,7 +21,7 @@ namespace BookManagement.DataAccess.Repositories
         }
 
         public async Task AddBookAsync(Book book)
-        {
+        {            
             try
             {
                 await _context.Books.AddAsync(book);
@@ -128,7 +128,7 @@ namespace BookManagement.DataAccess.Repositories
             }
             if(role != "Admin")
             {
-                query = query.Where(b => b.Status == BookStatus.Avaiable);
+                query = query.Where(b => b.Status == BookStatus.Available);
             }
 
             int totalCount = await query.CountAsync();

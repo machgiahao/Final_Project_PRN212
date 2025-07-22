@@ -28,9 +28,9 @@
         <div class="table-box">
             <div class="table-header">
                 <span>Book Management</span>
-                <a asp-page="./Create" class="btn btn-primary ms-2 create-btn">
+                <button type="button" class="btn btn-primary ms-2 create-btn" data-bs-toggle="modal" data-bs-target="#createBookModal" id="createNewBookBtn">
                     <i class="bi bi-plus-circle me-1"></i> Create New
-                </a>
+                </button>
             </div>
             <div class="table-responsive">
                 <table class="user-table">
@@ -121,3 +121,65 @@
         </div>
     </div>
 </div>
+<div class="modal fade" id="createBookModal" tabindex="-1" aria-labelledby="createBookModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+        </div>
+    </div>
+</div>
+@section Scripts {
+    <script>
+        console.log("Index.cshtml scripts section loaded!"); // THÊM DÒNG NÀY
+
+        $(document).ready(function () {
+            console.log("Document ready!"); // THÊM DÒNG NÀY
+
+            $('#createNewBookBtn').on('click', function() { // THÊM DÒNG NÀY ĐỂ DEBUG NÚT CLICK
+                console.log("Create New button clicked!");
+            });
+
+
+            $('#createBookModal').on('show.bs.modal', function (event) {
+                console.log("Modal show event triggered!");
+                var modal = $(this);
+                $.get('@Url.Page("/Admin/Book/Create", "PartialForm")', function (data) {
+                    console.log("AJAX request completed!"); // Thêm dòng này
+                    modal.find('.modal-content').html(data);
+                    $.validator.unobtrusive.parse(modal.find('form'));
+                }).fail(function(jqXHR, textStatus, errorThrown) {
+                    console.error("AJAX request failed:", textStatus, errorThrown, jqXHR.responseText); // Thêm dòng này để bắt lỗi AJAX
+                });
+            });
+
+            // Event delegation for form submission inside the modal
+            $(document).on('submit', '#createBookModal form', function (e) {
+                e.preventDefault();
+                console.log("Form submitted from modal!"); // Thêm dòng này
+
+                var form = $(this);
+                if (form.valid()) {
+                    $.ajax({
+                        url: form.attr('action'),
+                        type: form.attr('method'),
+                        data: new FormData(form[0]),
+                        processData: false,
+                        contentType: false,
+                        success: function (response) {
+                            if (response.success) {
+                                $('#createBookModal').modal('hide');
+                                location.reload();
+                                alert(response.message || "Book created successfully!");
+                            } else {
+                                form.closest('.modal-content').html(response);
+                                $.validator.unobtrusive.parse(form);
+                            }
+                        },
+                        error: function (xhr, status, error) {
+                            alert("An error occurred: " + (xhr.responseJSON?.message || error));
+                        }
+                    });
+                }
+            });
+        });
+    </script>
+}
