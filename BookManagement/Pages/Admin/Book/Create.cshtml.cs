@@ -4,13 +4,7 @@ using BookManagement.Services.DTOs.Book;
 using BookManagement.Services.IServices;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
-using System.Threading.Tasks;
-using Microsoft.AspNetCore.Hosting;
-using System.IO;
-using System;
-using System.Collections.Generic;
-using Microsoft.AspNetCore.Mvc.Rendering;
-using System.Security.Claims; // Cần thiết cho SelectList
+using System.Security.Claims;
 
 namespace BookManagement.Pages.Admin.Book
 {
@@ -34,27 +28,22 @@ namespace BookManagement.Pages.Admin.Book
 
         public List<Category> Categories { get; set; } = new();
 
-        // Handler này được gọi khi AJAX request từ Index.cshtml để tải form vào modal
         public async Task<IActionResult> OnGetPartialForm()
         {
             Categories = (await _categoryService.GetAllCategoriesAsync())?.ToList() ?? new List<Category>();
-            return Page(); // Trả về chính Page này (Create.cshtml) vì nó đã được đặt Layout = null
+            return Page();
         }
 
-        // Handler cho POST request khi submit form từ modal
         public async Task<IActionResult> OnPostAsync()
         {
-            // Tải lại Categories trước khi kiểm tra ModelState nếu có lỗi
-            // để Dropdownlist không bị trống khi form được trả về
             Categories = (await _categoryService.GetAllCategoriesAsync())?.ToList() ?? new List<Category>();
 
             if (!ModelState.IsValid)
             {
-                // Nếu validation thất bại, trả về lại form với các lỗi để hiển thị trong modal
                 return Page();
             }
 
-            // Xử lý upload ảnh
+            // Handle upload picture
             if (NewBook.ImageFile != null && NewBook.ImageFile.Length > 0)
             {
                 string uploadsFolder = Path.Combine(_webHostEnvironment.WebRootPath, "img", "books");
@@ -86,16 +75,14 @@ namespace BookManagement.Pages.Admin.Book
                 bookEntity.UpdatedAt = null;
                 bookEntity.CreatedBy = User.FindFirstValue(ClaimTypes.NameIdentifier);
                 bookEntity.UpdatedBy = null;
-                bookEntity.Status = BusinessObjects.Enum.BookStatus.Available; // Đặt trạng thái mặc định
+                bookEntity.Status = BusinessObjects.Enum.BookStatus.Available;
 
                 await _bookService.AddBookAsync(bookEntity);
-                // Trả về JSON khi thành công để AJAX trong Index.cshtml xử lý
                 return new JsonResult(new { success = true, message = "Book created successfully!" });
             }
             catch (Exception ex)
             {
                 ModelState.AddModelError(string.Empty, $"Error creating book: {ex.Message}");
-                // Nếu có lỗi server, trả về lại form với lỗi để hiển thị trong modal
                 return Page();
             }
         }

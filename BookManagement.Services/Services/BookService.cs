@@ -70,15 +70,15 @@ namespace BookManagement.Services.Services
             }
         }
 
-        public async Task DeleteBookAsync(int id)
+        public async Task<bool> DeleteBookAsync(int id)
         {
             try
             {
                 await _bookRepository.DeleteBookAsync(id);
+                return true;
             }
             catch (Exception ex)
             {
-
                 throw new Exception("Error deleting book.", ex);
             }
         }

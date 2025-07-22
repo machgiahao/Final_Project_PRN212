@@ -58,3 +58,32 @@
 
 <script src="~/lib/jquery-validation/dist/jquery.validate.min.js"></script>
 <script src="~/lib/jquery-validation-unobtrusive/jquery.validate.unobtrusive.min.js"></script>
+<script>
+    $(document).ready(function () {
+        console.log("Create modal partial view loaded. Initializing image preview script.");
+
+        const imageInput = document.getElementById('imageInput');
+        const imagePreview = document.getElementById('imagePreview');
+        const imagePreviewContainer = document.getElementById('imagePreviewContainer');
+
+        if (imageInput && imagePreview && imagePreviewContainer) {
+            imageInput.addEventListener('change', function (event) {
+                console.log("Image input changed!");
+                const file = event.target.files[0];
+                if (file) {
+                    const reader = new FileReader();
+                    reader.onload = function (e) {
+                        imagePreview.src = e.target.result;
+                        imagePreviewContainer.style.display = 'block';
+                    };
+                    reader.readAsDataURL(file);
+                } else {
+                    imagePreview.src = "#";
+                    imagePreviewContainer.style.display = 'none';
+                }
+            });
+        } else {
+            console.error("Image preview elements not found in the DOM.");
+        }
+    });
+</script>
