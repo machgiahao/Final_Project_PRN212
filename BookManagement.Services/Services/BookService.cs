@@ -86,7 +86,7 @@ namespace BookManagement.Services.Services
         {
             try
             {
-                return await _bookRepository.GetBooksPagedAsync(queryDto.PageNumber, queryDto.PageSize, queryDto.SelectedCategories, queryDto.MinPrice, queryDto.MaxPrice, queryDto.Title, queryDto.Role);
+                return await _bookRepository.GetBooksPagedAsync(queryDto.PageNumber, queryDto.PageSize, queryDto.SelectedCategories, queryDto.MinPrice, queryDto.MaxPrice, queryDto.Title, queryDto.Role, queryDto.Status);
             }
             catch (Exception ex)
             {
