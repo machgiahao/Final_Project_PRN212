@@ -11,6 +11,7 @@
   </ItemGroup>
 
   <ItemGroup>
+    <Folder Include="wwwroot\css\NewFolder\" />
     <Folder Include="wwwroot\img\books\" />
     <Folder Include="wwwroot\js\signalr\" />
   </ItemGroup>

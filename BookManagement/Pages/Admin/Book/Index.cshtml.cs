@@ -8,6 +8,8 @@ using AutoMapper;
 using BookManagement.BusinessObjects.Entities;
 using BookManagement.Services.DTOs.Book;
 using BookManagement.ViewModels.Category;
+using BookManagement.BusinessObjects.Commons;
+using BookManagement.Services.DTOs.Category;
 
 namespace BookManagement.Pages.Admin.Book
 {
@@ -25,7 +27,7 @@ namespace BookManagement.Pages.Admin.Book
         }
 
         public List<BusinessObjects.Entities.Book> Books { get; set; } = new();
-        public List<CateFilterViewModel> Categories { get; set; } = new();
+        public List<CateDto> AllCategories { get; set; } = new();
         public PaginationViewModel Pagination { get; set; } = new();
         public IList<BookViewModel> BookViewModel { get; private set; }
         [BindProperty(SupportsGet = true)]
@@ -36,7 +38,8 @@ namespace BookManagement.Pages.Admin.Book
             Filter.Role = "Admin";
 
             var filter = _mapper.Map<BookPagedQueryDto>(Filter);
-            AllCategories = (await _categoryService.GetAllCategoriesAsync()).ToList();
+            var cateList = await _categoryService.GetAllCategoriesAsync(1, int.MaxValue, null, null, null);
+            AllCategories = _mapper.Map<List<CateDto>>(cateList.Items);
             var pagedResult = await _bookService.GetBooksPagedAsync(filter);
 
             Books = pagedResult.Items.ToList();

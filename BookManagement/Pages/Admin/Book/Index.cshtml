@@ -46,8 +46,8 @@
                             <div>
                                 @foreach (var category in Model.AllCategories)
                                 {
-                                    var isChecked = Model.Filter.SelectedCategories != null && Model.Filter.SelectedCategories.Contains(category.CategoryId);
-                                    <div class="form-check">
+                                var isChecked = Model.Filter.SelectedCategories != null && Model.Filter.SelectedCategories.Contains(category.CategoryId.Value);
+                                <div class="form-check">
                                         <input class="form-check-input" type="checkbox" name="Filter.SelectedCategories" id="cat-@category.CategoryId" value="@category.CategoryId" @(isChecked ? "checked" : null) />
                                         <label class="form-check-label" for="cat-@category.CategoryId">@category.Name</label>
                                     </div>
