@@ -39,7 +39,7 @@
                         <a class="nav-link @(currentPage.StartsWith("/book") ? "active" : "")" asp-page="/Book/Index">Books</a>
                     </li>
                     <li class="nav-item">
-                        <a class="nav-link @(currentPage.Contains("/about") ? "active" : "")" href="#">About Author</a>
+                        <a class="nav-link @(currentPage.Contains("/chat") ? "active" : "")" asp-page="/Chat" >Chat Bot</a>
                     </li>
                     <li class="nav-item">
                         <a class="nav-link @(currentPage.Contains("/blog") ? "active" : "")" href="#">Blog</a>

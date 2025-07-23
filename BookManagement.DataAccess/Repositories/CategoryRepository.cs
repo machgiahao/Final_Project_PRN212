@@ -1,7 +1,8 @@
-﻿using Microsoft.EntityFrameworkCore;
-using BookManagement.DataAccess.Context;
+﻿using BookManagement.BusinessObjects.Commons;
 using BookManagement.BusinessObjects.Entities;
+using BookManagement.DataAccess.Context;
 using BookManagement.DataAccess.IRepositories;
+using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -51,21 +52,52 @@ namespace BookManagement.DataAccess.Repositories
             }
         }
 
-        public async Task<IEnumerable<Category>> GetAllCategoriesAsync()
+        public async Task<PagedResult<Category>> GetAllCategoriesAsync(int pageNumber, int pageSize, string? name, int? status, string? parentCategoryName)
         {
             try
             {
-                return await _context.Categories
+                var query = _context.Categories
                     .Include(c => c.Books)
                     .Include(c => c.ParentCategory)
                     .Include(c => c.InverseParentCategory)
+                    .AsQueryable();
+
+                if (!string.IsNullOrEmpty(name))
+                {
+                    query = query.Where(c => c.Name.Contains(name));
+                }
+
+                if (status.HasValue)
+                {
+                    query = query.Where(c => c.Status == status.Value);
+                }
+
+                if (!string.IsNullOrEmpty(parentCategoryName))
+                {
+                    query = query.Where(c => c.Name.Contains(parentCategoryName));
+                }
+
+                var totalCount = await query.CountAsync();
+                var categories = await query
+                    .OrderBy(c => c.Name)
+                    .Skip((pageNumber - 1) * pageSize)
+                    .Take(pageSize)
                     .ToListAsync();
+
+                return new PagedResult<Category>
+                {
+                    Items = categories,
+                    TotalCount = totalCount,
+                    PageNumber = pageNumber,
+                    PageSize = pageSize
+                };
             }
             catch (Exception ex)
             {
                 throw new Exception("An error occurred while retrieving all categories.", ex);
             }
         }
+
 
         public async Task UpdateCategoryAsync(Category category)
         {
@@ -110,6 +142,21 @@ namespace BookManagement.DataAccess.Repositories
             catch (Exception ex)
             {
                 throw new Exception("An unexpected error occurred while deleting the category.", ex);
+            }
+        }
+
+        public async Task<Category[]> GetAllParentCategoriesAsync()
+        {
+            try
+            {
+                return await _context.Categories
+                    .Where(c => c.ParentCategoryId == null)
+                    .OrderBy(c => c.Name)
+                    .ToArrayAsync();
+            }
+            catch (Exception ex)
+            {
+                throw new Exception("An error occurred while retrieving parent categories.", ex);
             }
         }
     }

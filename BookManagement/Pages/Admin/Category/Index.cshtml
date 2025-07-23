@@ -1,0 +1,204 @@
+﻿@page
+@using BookManagement.ViewModels.Category
+@model BookManagement.Pages.Admin.Category.IndexModel
+@{
+    ViewData["Title"] = "Category Management";
+    ViewData["CreateFormPartial"] = "Category/_Createform";
+    ViewData["EditFormPartial"] = "Category/_EditForm";
+    Layout = "_AdminLayout";
+}
+
+@functions {
+    string BuildQueryString(int pageNumber, int? pageSize = null)
+    {
+        var query = new List<string> { $"Filter.PageNumber={pageNumber}" };
+        if (!string.IsNullOrWhiteSpace(Model.Filter.Name))
+            query.Add($"Filter.Name={Model.Filter.Name}");
+        if (Model.Filter.Status.HasValue)
+            query.Add($"Filter.Status={Model.Filter.Status.Value}");
+        if (!string.IsNullOrWhiteSpace(Model.Filter.ParentCategoryName))
+            query.Add($"Filter.ParentCategoryName={Model.Filter.ParentCategoryName}");
+        if (pageSize.HasValue)
+            query.Add($"Filter.PageSize={pageSize.Value}");
+        else
+            query.Add($"Filter.PageSize={Model.Pagination.PageSize}");
+        return "?" + string.Join("&", query);
+    }
+}
+
+<link rel="stylesheet" href="~/css/User/index.css" />
+
+@if (TempData["Message"] != null)
+{
+    <div class="alert alert-success alert-dismissible fade show" role="alert">
+        @TempData["Message"]
+        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+    </div>
+}
+
+<div class="user-admin-outer">
+    <div class="user-admin-container">
+        <!-- Filter Box -->
+        <div class="filter-box">
+            <form method="get" class="filter-form">
+                <div class="filter-row">
+                    <div class="filter-group">
+                        <label>Name</label>
+                        <input type="text" name="Filter.Name" value="@Model.Filter.Name" autocomplete="off" />
+                    </div>
+                    <div class="filter-group">
+                        <label>Status</label>
+                        <select name="Filter.Status" class="form-select">
+                            <option value="">-- All --</option>
+                            <option value="1" selected="@(Model.Filter.Status == 1 ? "selected" : null)">Active</option>
+                            <option value="0" selected="@(Model.Filter.Status == 0 ? "selected" : null)">Inactive</option>
+                        </select>
+                    </div>
+                    <div class="filter-group">
+                        <label>Parent Category Name</label>
+                        <input type="text" name="Filter.ParentCategoryName" value="@Model.Filter.ParentCategoryName" autocomplete="off" />
+                    </div>
+                    <div class="filter-actions">
+                        <button type="submit" class="btn btn-primary">Search</button>
+                        <a href="./Category/Index" class="btn btn-light">Clear</a>
+                    </div>
+                </div>
+            </form>
+        </div>
+
+        <!-- Table Box -->
+        <div class="table-box">
+            <div class="table-header">
+                <span>Category List</span>
+                <a href="#" data-bs-toggle="modal" data-bs-target="#createModal" class="btn btn-primary ms-2 create-btn">
+                    <i class="bi bi-plus-circle me-1"></i> Create New
+                </a>
+                @await Html.PartialAsync("_CreateModal", Model.CreateCategoryViewModel, new ViewDataDictionary(ViewData)
+                {
+                    Model = Model.CreateCategoryViewModel
+                                })
+            </div>
+
+            <table class="user-table">
+                <thead>
+                    <tr>
+                        <th>Id</th>
+                        <th>Name</th>
+                        <th>Status</th>
+                        <th>Parent Category</th>
+                        <th>Action</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @if (Model.CategoryViewModel != null)
+                    {
+                        foreach (var cate in Model.CategoryViewModel)
+                        {
+                            <tr>
+                                <td>
+                                    <a href="/Category/Details?id=@cate.CategoryId" class="user-id-link">@cate.CategoryId</a>
+                                </td>
+                                <td>@cate.Name</td>
+                                <td>
+                                    @if (cate.Status == 1)
+                                    {
+                                        <span class="badge bg-success">Active</span>
+                                    }
+                                    else
+                                    {
+                                        <span class="badge bg-secondary">Inactive</span>
+                                    }
+                                </td>
+                                <td>
+                                    @if (!string.IsNullOrEmpty(cate.ParentCategoryName))
+                                    {
+                                        @cate.ParentCategoryName
+                                    }
+                                    else
+                                    {
+                                        <text>Không có</text>
+                                    }
+                                </td>
+                                <td>
+                                    <button type="button"
+                                            class="icon-btn delete-btn"
+                                            title="Delete"
+                                            data-bs-toggle="modal"
+                                            data-bs-target="#deleteModal-@cate.CategoryId"
+                                            onclick="event.stopPropagation();">
+                                        <i class="bi bi-trash"></i>
+                                    </button>
+                                    <a asp-page-handler="Edit" asp-route-id="@cate.CategoryId" class="icon-btn edit-btn me-2" title="Edit" onclick="event.stopPropagation();">
+                                        <i class="bi bi-pencil"></i>
+                                    </a>
+                                </td>
+                            </tr>
+                        }
+                    }
+                </tbody>
+            </table>
+
+            <!-- Pagination -->
+            <div class="table-footer">
+                @if (Model.Pagination.TotalPages > 1)
+                {
+                    <nav aria-label="Page navigation">
+                        <ul class="pagination justify-content-center mt-4">
+                            <li class="page-item @(Model.Pagination.CurrentPage == 1 ? "disabled" : "")">
+                                <a class="page-link" href="@BuildQueryString(Model.Pagination.CurrentPage - 1)">Previous</a>
+                            </li>
+                            @for (int i = 1; i <= Model.Pagination.TotalPages; i++)
+                            {
+                                <li class="page-item @(i == Model.Pagination.CurrentPage ? "active" : "")">
+                                    <a class="page-link" href="@BuildQueryString(i)">@i</a>
+                                </li>
+                            }
+                            <li class="page-item @(Model.Pagination.CurrentPage == Model.Pagination.TotalPages ? "disabled" : "")">
+                                <a class="page-link" href="@BuildQueryString(Model.Pagination.CurrentPage + 1)">Next</a>
+                            </li>
+                        </ul>
+                    </nav>
+                }
+            </div>
+        </div>
+    </div>
+</div>
+
+@await Html.PartialAsync("_EditModal", Model.EditCategoryViewModel)
+
+@if (Model.CategoryViewModel != null)
+{
+    foreach (var item in Model.CategoryViewModel)
+    {
+        @await Html.PartialAsync("_DeleteModal", item.CategoryId.ToString(), new ViewDataDictionary(ViewData)
+        {
+            { "Name", item.Name }
+        })
+    }
+}
+
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+    @if (ViewData["ShowEditModal"] as bool? == true)
+    {
+        <script>
+            var editModal = new bootstrap.Modal(document.getElementById('editModal'));
+            editModal.show();
+        </script>
+    }
+    @if (ViewData["ShowCreateModal"] as bool? == true)
+    {
+        <script>
+            var createModal = new bootstrap.Modal(document.getElementById('createModal'));
+            createModal.show();
+        </script>
+    }
+    <script>
+        setTimeout(function () {
+            document.querySelectorAll('.alert-dismissible').forEach(function(alert) {
+                var bsAlert = bootstrap.Alert.getOrCreateInstance(alert);
+                bsAlert.close();
+            });
+        }, 3000);
+    </script>
+}

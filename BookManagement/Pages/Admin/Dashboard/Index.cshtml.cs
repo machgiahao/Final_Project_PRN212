@@ -58,14 +58,14 @@ namespace BookManagement.Pages.Dashboard
                 .ToList();
 
             // Lấy danh sách category từ DB
-            var categories = await _categoryService.GetAllCategoriesAsync();
-            Dashboard.CategoryLabels = categories.Select(c => c.Name).ToList();
+            var categories = await _categoryService.GetAllCategoriesAsync(1, int.MaxValue, null, null, null);
+            Dashboard.CategoryLabels = categories.Items.Select(c => c.Name).ToList();
 
             // Lấy tất cả order details và books
             var allBooks = allOrderDetails.Select(od => od.Book).ToList();
 
             // BooksSoldByCategory
-            Dashboard.BooksSoldByCategory = categories
+            Dashboard.BooksSoldByCategory = categories.Items
                 .Select(cat =>
                     allOrderDetails
                         .Where(od => od.Book != null && od.Book.CategoryId == cat.CategoryId)
@@ -73,7 +73,7 @@ namespace BookManagement.Pages.Dashboard
                 ).ToList();
 
             // RevenueByCategory
-            Dashboard.RevenueByCategory = categories
+            Dashboard.RevenueByCategory = categories.Items
                 .Select(cat =>
                     allOrderDetails
                         .Where(od => od.Book != null && od.Book.CategoryId == cat.CategoryId)

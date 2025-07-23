@@ -1,0 +1,21 @@
+﻿@page
+@model BookManagement.Pages.ChatModel
+@{
+    ViewData["Title"] = "Chat with AI";
+}
+
+<h2>Chat with AI</h2>
+
+<form method="post">
+    <div>
+        <label for="Prompt">Your Message:</label><br />
+        <textarea id="Prompt" name="Prompt" rows="4" cols="50">@Model.Prompt</textarea>
+    </div>
+    <button type="submit">Ask</button>
+</form>
+
+@if (!string.IsNullOrEmpty(Model.Response))
+{
+    <h3>Response:</h3>
+    <p>@Model.Response</p>
+}

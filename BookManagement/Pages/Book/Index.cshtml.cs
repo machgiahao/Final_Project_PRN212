@@ -44,8 +44,8 @@ namespace BookManagement.Pages.Book
                 TotalPages = (int)Math.Ceiling((double)pagedResult.TotalCount / Filter.PageSize)
             };
 
-            var categories = await _categoryService.GetAllCategoriesAsync();
-            Categories = categories?.ToList() ?? new List<Category>();
+            var categories = await _categoryService.GetAllCategoriesAsync(1, int.MaxValue, null, null, null);
+            Categories = categories?.Items.Select(c => _mapper.Map<Category>(c)).ToList() ?? new List<Category>();
         }
 
 

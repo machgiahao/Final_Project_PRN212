@@ -2,6 +2,7 @@ using AutoMapper;
 using BookManagement.Services.DTOs.Mail;
 using BookManagement.Services.IServices;
 using BookManagement.ViewModels.Book;
+using BookManagement.ViewModels.Category;
 using BookManagement.ViewModels.Home;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
@@ -27,8 +28,8 @@ namespace BookManagement.Pages
         public async Task OnGetAsync()
         {
             // Get featured categories (e.g., top 6)
-            var categories = await _categoryService.GetAllCategoriesAsync();
-            Home.FeaturedCategories = categories.Take(6).ToList();
+            var categories = await _categoryService.GetAllCategoriesAsync(1, 6, null, null, null);
+            Home.FeaturedCategories = _mapper.Map<List<CateViewModel>>(categories.Items);
 
             // Get all books
             var books = await _bookService.GetAllBooksAsync();

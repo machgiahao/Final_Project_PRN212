@@ -1,13 +1,14 @@
+using BookManagement.Configurations;
+using BookManagement.DataAccess.Context;
 using BookManagement.DataAccess.IRepositories;
 using BookManagement.DataAccess.Repositories;
-using BookManagement.Services.IServices;
-using BookManagement.Services.Services;
-using BookManagement.Services.Mappings;
 using BookManagement.Mappings;
-using Microsoft.AspNetCore.Authentication.Cookies;
-using BookManagement.DataAccess.Context;
-using Microsoft.EntityFrameworkCore;
+using BookManagement.Services.IServices;
+using BookManagement.Services.Mappings;
+using BookManagement.Services.Services;
 using BookManagement.SignalR;
+using Microsoft.AspNetCore.Authentication.Cookies;
+using Microsoft.EntityFrameworkCore;
 using System.Configuration;
 namespace BookManagement
 {
@@ -51,6 +52,9 @@ namespace BookManagement
             builder.Services.AddScoped<IOrderService, OrderService>();
             builder.Services.AddScoped<IBookService, BookService>();
             builder.Services.AddScoped<IEmailService, EmailService>();
+
+            builder.Services.Configure<OpenAIOptions>(builder.Configuration.GetSection("OpenAI"));
+            builder.Services.AddHttpClient<IChatBotService, ChatBotService>();
 
             //Configure Authorization
             builder.Services.AddAuthentication(CookieAuthenticationDefaults.AuthenticationScheme)
