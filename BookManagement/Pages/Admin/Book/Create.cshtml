@@ -1,0 +1,89 @@
+﻿@page
+@model BookManagement.Pages.Admin.Book.CreateModel
+@{
+    Layout = null;
+}
+
+@* <div asp-validation-summary="ModelOnly" class="text-danger"></div> *@
+
+<form method="post" asp-page="/Admin/Book/Create" enctype="multipart/form-data">
+    <div class="modal-header">
+        <h5 class="modal-title" id="createBookModalLabel">Create New Book</h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+    </div>
+    <div class="modal-body">
+        <div class="mb-3">
+            <label asp-for="NewBook.Title" class="form-label"></label>
+            <input asp-for="NewBook.Title" class="form-control" />
+            <span asp-validation-for="NewBook.Title" class="text-danger"></span>
+        </div>
+        <div class="mb-3">
+            <label asp-for="NewBook.Author" class="form-label"></label>
+            <input asp-for="NewBook.Author" class="form-control" />
+            <span asp-validation-for="NewBook.Author" class="text-danger"></span>
+        </div>
+        <div class="mb-3">
+            <label asp-for="NewBook.CategoryId" class="form-label">Category</label>
+            <select asp-for="NewBook.CategoryId" class="form-select" asp-items="@(new SelectList(Model.Categories, "CategoryId", "Name"))">
+                <option value="">-- Select Category --</option>
+            </select>
+            <span asp-validation-for="NewBook.CategoryId" class="text-danger"></span>
+        </div>
+        <div class="mb-3">
+            <label asp-for="NewBook.Price" class="form-label"></label>
+            <input asp-for="NewBook.Price" type="number" step="0.01" class="form-control" />
+            <span asp-validation-for="NewBook.Price" class="text-danger"></span>
+        </div>
+        <div class="mb-3">
+            <label asp-for="NewBook.Quantity" class="form-label"></label>
+            <input asp-for="NewBook.Quantity" type="number" class="form-control" />
+            <span asp-validation-for="NewBook.Quantity" class="text-danger"></span>
+        </div>
+        <div class="mb-3">
+            <label asp-for="NewBook.ImageFile" class="form-label">Upload Image</label>
+            <input asp-for="NewBook.ImageFile" type="file" class="form-control" accept="image/*" id="imageInput" />
+            <span asp-validation-for="NewBook.ImageFile" class="text-danger"></span>
+        </div>
+
+        <div class="mb-3" id="imagePreviewContainer" style="display: none;">
+            <label class="form-label">Image Preview:</label><br />
+            <img id="imagePreview" src="#" alt="Image Preview" style="max-width: 200px; max-height: 200px; border: 1px solid #ddd; padding: 5px;" />
+        </div>
+    </div>
+    <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+        <button type="submit" class="btn btn-primary">Create Book</button>
+    </div>
+</form>
+
+<script src="~/lib/jquery-validation/dist/jquery.validate.min.js"></script>
+<script src="~/lib/jquery-validation-unobtrusive/jquery.validate.unobtrusive.min.js"></script>
+<script>
+    $(document).ready(function () {
+        console.log("Create modal partial view loaded. Initializing image preview script.");
+
+        const imageInput = document.getElementById('imageInput');
+        const imagePreview = document.getElementById('imagePreview');
+        const imagePreviewContainer = document.getElementById('imagePreviewContainer');
+
+        if (imageInput && imagePreview && imagePreviewContainer) {
+            imageInput.addEventListener('change', function (event) {
+                console.log("Image input changed!");
+                const file = event.target.files[0];
+                if (file) {
+                    const reader = new FileReader();
+                    reader.onload = function (e) {
+                        imagePreview.src = e.target.result;
+                        imagePreviewContainer.style.display = 'block';
+                    };
+                    reader.readAsDataURL(file);
+                } else {
+                    imagePreview.src = "#";
+                    imagePreviewContainer.style.display = 'none';
+                }
+            });
+        } else {
+            console.error("Image preview elements not found in the DOM.");
+        }
+    });
+</script>

@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using BookManagement.BusinessObjects.Enum;
 
 namespace BookManagement.BusinessObjects.Entities;
 
@@ -30,7 +31,7 @@ public partial class Book
 
     public string? ImageUrl { get; set; }
 
-    public int? Status { get; set; }
+    public BookStatus? Status { get; set; }
 
     public virtual ICollection<CartItem> CartItems { get; set; } = new List<CartItem>();
 

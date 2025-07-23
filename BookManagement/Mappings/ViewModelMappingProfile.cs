@@ -1,5 +1,6 @@
 ﻿using AutoMapper;
 using BookManagement.BusinessObjects.Entities;
+using BookManagement.BusinessObjects.Enum;
 using BookManagement.Services.DTOs.Auth;
 using BookManagement.Services.DTOs.Book;
 using BookManagement.Services.DTOs.User;
@@ -34,8 +35,22 @@ namespace BookManagement.Mappings
             // Book 
             CreateMap<Book, BookViewModel>()
                 .ForMember(dest => dest.CategoryName, opt => opt.MapFrom(src => src.Category.Name))
-                .ForMember(dest => dest.ImageUrl, opt => opt.MapFrom(src => src.ImageUrl));
+                .ForMember(dest => dest.ImageUrl, opt => opt.MapFrom(src => src.ImageUrl))
+                .ForMember(dest => dest.StatusDisplay, opt => opt.MapFrom(src =>
+                    src.Status == BookStatus.Available ? "Available" :
+                    src.Status == BookStatus.SoldOut ? "Sold Out" :
+                    src.Status == BookStatus.Hide ? "Hidden" : "Unknown"
+                ));
             CreateMap<BookFilterViewModel, BookPagedQueryDto>().ReverseMap();
+            CreateMap<CreateBookDto, Book>()
+                .ForMember(dest => dest.BookId, opt => opt.Ignore())
+                .ForMember(dest => dest.Stock, opt => opt.MapFrom(src => src.Quantity))
+                .ForMember(dest => dest.Sold, opt => opt.Ignore())
+                .ForMember(dest => dest.CreatedAt, opt => opt.Ignore())
+                .ForMember(dest => dest.UpdatedAt, opt => opt.Ignore())
+                .ForMember(dest => dest.CreatedBy, opt => opt.Ignore())
+                .ForMember(dest => dest.UpdatedBy, opt => opt.Ignore())
+                .ForMember(dest => dest.Status, opt => opt.Ignore());
 
             // Order
             CreateMap<PurchaseViewModel, Order>()
