@@ -1,5 +1,7 @@
 ﻿using AutoMapper;
+using BookManagement.BusinessObjects.Entities;
 using BookManagement.Services.IServices;
+using BookManagement.Services.Services;
 using BookManagement.ViewModels.Order;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
@@ -12,11 +14,15 @@ namespace BookManagement.Pages.Order
     public class MyOrderModel : PageModel
     {
         private readonly IOrderService _orderService;
+        private readonly IOrderDetailService _orderDetailService;
+        private readonly IBookService _bookService;
         private readonly IMapper _mapper;
 
-        public MyOrderModel(IOrderService orderService, IMapper mapper)
+        public MyOrderModel(IOrderService orderService, IOrderDetailService orderDetailService, IBookService bookService, IMapper mapper)
         {
             _orderService = orderService;
+            _orderDetailService = orderDetailService;
+            _bookService = bookService;
             _mapper = mapper;
         }
 
@@ -40,6 +46,21 @@ namespace BookManagement.Pages.Order
             if (orderViewModel != null && orderViewModel.StatusText == "Pending")
             {
                 order.Status = 4;
+                IEnumerable<OrderDetail> orderDetails = await _orderDetailService.GetOrderDetailsByOrderIdAsync(order.OrderId);
+                foreach (var orderDetail in orderDetails)
+                {
+                    var book = await _bookService.GetBookByIdAsync(orderDetail.BookId);
+                    if (book != null)
+                    {
+                        if (book.Stock == 0)
+                        {
+                            book.Status = 0;
+                        }
+                        book.Stock += orderDetail.Quantity;
+                        book.Sold -= orderDetail.Quantity;
+                        await _bookService.UpdateBookAsync(book);
+                    }
+                }
                 await _orderService.UpdateOrderAsync(order);
                 TempData["SuccessMessage"] = "Order cancelled successfully.";
             }

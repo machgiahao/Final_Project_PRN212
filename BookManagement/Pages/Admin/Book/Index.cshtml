@@ -1,312 +1,358 @@
-﻿
-    @page
-    @model BookManagement.Pages.Admin.Book.IndexModel
-    @{
-        ViewData["Title"] = "Book Management";
-        Layout = "_AdminLayout";
+﻿@page
+@model BookManagement.Pages.Admin.Book.IndexModel
+@{
+    ViewData["Title"] = "Book Management";
+    Layout = "_AdminLayout";
+}
+@functions {
+    string BuildQueryString(int pageNumber, int? pageSize = null)
+    {
+        var query = new List<string> { $"Filter.PageNumber={pageNumber}" };
+        if (!string.IsNullOrWhiteSpace(Model.Filter.Title))
+            query.Add($"Filter.Title={Model.Filter.Title}");
+        if (Model.Filter.SelectedCategories != null && Model.Filter.SelectedCategories.Any())
+            query.Add($"Filter.SelectedCategories={string.Join(",", Model.Filter.SelectedCategories)}");
+        if (Model.Filter.MinPrice.HasValue)
+            query.Add($"Filter.MinPrice={Model.Filter.MinPrice.Value}");
+        if (Model.Filter.MaxPrice.HasValue)
+            query.Add($"Filter.MaxPrice={Model.Filter.MaxPrice.Value}");
+        if (Model.Filter.Status.HasValue)
+            query.Add($"Filter.Status={Model.Filter.Status.Value}");
+        if (pageSize.HasValue)
+            query.Add($"Filter.PageSize={pageSize.Value}");
+        else
+            query.Add($"Filter.PageSize={Model.Pagination.PageSize}");
+        return "?" + string.Join("&", query);
     }
-    @functions {
-        string BuildQueryString(int pageNumber, int? pageSize = null)
-        {
-            var query = new List<string> { $"Filter.PageNumber={pageNumber}" };
-            if (!string.IsNullOrWhiteSpace(Model.Filter.Title))
-                query.Add($"Filter.Title={Model.Filter.Title}");
-            if (Model.Filter.SelectedCategories != null && Model.Filter.SelectedCategories.Any())
-                query.Add($"Filter.SelectedCategories={string.Join(",", Model.Filter.SelectedCategories)}");
-            if (Model.Filter.MinPrice.HasValue)
-                query.Add($"Filter.MinPrice={Model.Filter.MinPrice.Value}");
-            if (Model.Filter.MaxPrice.HasValue)
-                query.Add($"Filter.MaxPrice={Model.Filter.MaxPrice.Value}");
-            if (Model.Filter.Status.HasValue)
-                query.Add($"Filter.Status={Model.Filter.Status.Value}");
-            if (pageSize.HasValue)
-                query.Add($"Filter.PageSize={pageSize.Value}");
-            else
-                query.Add($"Filter.PageSize={Model.Pagination.PageSize}");
-            return "?" + string.Join("&", query);
-        }
-    }
-    <link rel="stylesheet" href="~/css/Dashboard/bookManagement.css" />
+}
+<link rel="stylesheet" href="~/css/Dashboard/bookManagement.css" />
 
-    <div class="book-admin-outer">
-        <div class="book-admin-container">
-            <!-- Search & Filter Card -->
-            <div class="card mb-4">
-                <div class="card-header">
-                    <strong></strong>
-                </div>
-                <div class="card-body">
-                    <form method="get" id="filterForm" class="row g-3 align-items-end">
-                        <div class="col-md-3">
-                            <label for="Title" class="form-label">Title</label>
-                            <input type="text" class="form-control" id="Title" name="Filter.Title" value="@Model.Filter.Title" placeholder="Search by title..." />
+<div class="book-admin-outer">
+    <div class="book-admin-container">
+        <div class="card mb-4">
+            <div class="card-header">
+                <strong>Book Search & Filter</strong>
+            </div>
+            <div class="card-body">
+                <form method="get" id="filterForm" class="row g-3 align-items-end">
+                    <div class="col-md-3">
+                        <label for="Title" class="form-label">Title</label>
+                        <input type="text" class="form-control" id="Title" name="Filter.Title" value="@Model.Filter.Title" placeholder="Search by title..." />
+                    </div>
+                    <div class="col-md-3">
+                        <label class="form-label">Categories</label>
+                        <div>
+                            @foreach (var category in Model.AllCategories)
+                            {
+                                var isChecked = Model.Filter.SelectedCategories != null && Model.Filter.SelectedCategories.Contains(category.CategoryId);
+                                <div class="form-check">
+                                    <input class="form-check-input" type="checkbox" name="Filter.SelectedCategories" id="cat-@category.CategoryId" value="@category.CategoryId" @(isChecked ? "checked" : null) />
+                                    <label class="form-check-label" for="cat-@category.CategoryId">@category.Name</label>
+                                </div>
+                            }
                         </div>
-                        <div class="col-md-3">
-                            <label class="form-label">Categories</label>
-                            <div>
-                                @foreach (var category in Model.AllCategories)
-                                {
-                                    var isChecked = Model.Filter.SelectedCategories != null && Model.Filter.SelectedCategories.Contains(category.CategoryId);
-                                    <div class="form-check">
-                                        <input class="form-check-input" type="checkbox" name="Filter.SelectedCategories" id="cat-@category.CategoryId" value="@category.CategoryId" @(isChecked ? "checked" : null) />
-                                        <label class="form-check-label" for="cat-@category.CategoryId">@category.Name</label>
-                                    </div>
-                                }
-                            </div>
-                        </div>
-                        <div class="col-md-2">
-                            <label for="MinPrice" class="form-label">Min Price</label>
-                            <input type="number" class="form-control" id="MinPrice" name="Filter.MinPrice" value="@(Model.Filter.MinPrice?.ToString() ?? "")" min="0" step="0.01" />
-                        </div>
-                        <div class="col-md-2">
-                            <label for="MaxPrice" class="form-label">Max Price</label>
-                            <input type="number" class="form-control" id="MaxPrice" name="Filter.MaxPrice" value="@(Model.Filter.MaxPrice?.ToString() ?? "")" min="0" step="0.01" />
-                        </div>
-                        <div class="col-md-2">
-                            <label for="Status" class="form-label">Status</label>
-                            <select class="form-select" id="Status" name="Filter.Status">
-                                <option value="">All</option>
-                                @foreach (var status in Enum.GetValues(typeof(BookManagement.BusinessObjects.Enum.BookStatus)))
-                                {
-                                    var selected = Model.Filter.Status.HasValue && status.Equals(Model.Filter.Status.Value) ? "selected" : "";
+                    </div>
+                    <div class="col-md-2">
+                        <label for="MinPrice" class="form-label">Min Price</label>
+                        <input type="number" class="form-control" id="MinPrice" name="Filter.MinPrice" value="@(Model.Filter.MinPrice?.ToString() ?? "")" min="0" step="0.01" />
+                    </div>
+                    <div class="col-md-2">
+                        <label for="MaxPrice" class="form-label">Max Price</label>
+                        <input type="number" class="form-control" id="MaxPrice" name="Filter.MaxPrice" value="@(Model.Filter.MaxPrice?.ToString() ?? "")" min="0" step="0.01" />
+                    </div>
+                    <div class="col-md-2">
+                        <label for="Status" class="form-label">Status</label>
+                        <select class="form-select" id="Status" name="Filter.Status">
+                            <option value="">All</option>
+                            @foreach (var status in Enum.GetValues(typeof(BookManagement.BusinessObjects.Enum.BookStatus)))
+                            {
+                                var selected = Model.Filter.Status.HasValue && status.Equals(Model.Filter.Status.Value) ? "selected" : "";
                                 <option value="@(status)" selected="@(Model.Filter.Status.HasValue && status.Equals(Model.Filter.Status.Value) ? "selected" : null)">@status</option>
                             }
-                            </select>
-                        </div>
-                        <div class="col-md-2 d-flex align-items-end">
-                            <button type="submit" class="btn btn-primary w-100">Apply</button>
-                        </div>
+                        </select>
+                    </div>
+                    <div class="col-md-2 d-flex align-items-end">
+                        <button type="submit" class="btn btn-primary w-100">Apply</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+        <div class="table-box">
+            <div class="table-header">
+                <span>Book List</span>
+                <button type="button" class="btn btn-primary ms-2 create-btn" data-bs-toggle="modal" data-bs-target="#createBookModal" id="createNewBookBtn">
+                    <i class="bi bi-plus-circle me-1"></i> Create New
+                </button>
+            </div>
+            <div class="table-responsive">
+                <table class="user-table">
+                    <thead>
+                        <tr>
+                            <th>Image</th>
+                            <th>Title</th>
+                            <th>Author</th>
+                            <th>Category</th>
+                            <th>Price</th>
+                            <th>Stock</th>
+                            <th>Sold</th>
+                            <th>Status</th>
+                            <th>Created At</th>
+                            <th>Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @foreach (var book in Model.BookViewModel)
+                        {
+                            <tr>
+                                <td>
+                                    @if (!string.IsNullOrEmpty(book.ImageUrl))
+                                    {
+                                        <img src="@book.ImageUrl" alt="Book Image" class="img-thumbnail" style="max-width:60px;max-height:80px;" />
+                                    }
+                                </td>
+                                <td>@book.Title</td>
+                                <td>@book.Author</td>
+                                <td>@book.CategoryName</td>
+                                <td>@book.Price?.ToString("N0") đ</td>
+                                <td>@book.Stock</td>
+                                <td>@book.Sold</td>
+                                <td>
+                                    @if (book.StatusDisplay == "Available")
+                                    {
+                                        <span class="badge badge-status-available">Available</span>
+                                    }
+                                    else if (book.StatusDisplay == "Sold Out")
+                                    {
+                                        <span class="badge badge-status-soldout">Sold Out</span>
+                                    }
+                                    else if (book.StatusDisplay == "Hidden")
+                                    {
+                                        <span class="badge badge-status-hide">Hidden</span>
+                                    }
+                                </td>
+                                <td>@book.CreatedAt?.ToString("yyyy-MM-dd")</td>
+                                <td>
+                                    <button type="button"
+                                            class="icon-btn delete-btn"
+                                            title="Delete"
+                                            data-bs-toggle="modal"
+                                            data-bs-target="#deleteModal-@book.BookId"
+                                            onclick="event.stopPropagation();">
+                                        <i class="bi bi-trash"></i>
+                                    </button>
+                                    <button type="button"
+                                            class="icon-btn edit-btn me-2"
+                                            title="Edit"
+                                            data-bs-toggle="modal"
+                                            data-bs-target="#editBookModal"
+                                            data-book-id="@book.BookId"
+                                            onclick="event.stopPropagation();">
+                                        <i class="bi bi-pencil"></i>
+                                    </button>
+                                </td>
+                            </tr>
+                        }
+                    </tbody>
+                </table>
+            </div>
+            <div class="table-footer">
+                @if (Model.Pagination.TotalPages > 1)
+                {
+                    <nav aria-label="Page navigation">
+                        <ul class="pagination justify-content-center mt-4">
+                            <li class="page-item @(Model.Pagination.CurrentPage == 1 ? "disabled" : "")">
+                                <a class="page-link" href="@BuildQueryString(Model.Pagination.CurrentPage - 1)">Previous</a>
+                            </li>
+                            @for (int i = 1; i <= Model.Pagination.TotalPages; i++)
+                            {
+                                <li class="page-item @(i == Model.Pagination.CurrentPage ? "active" : "")">
+                                    <a class="page-link" href="@BuildQueryString(i)">@i</a>
+                                </li>
+                            }
+                            <li class="page-item @(Model.Pagination.CurrentPage == Model.Pagination.TotalPages ? "disabled" : "")">
+                                <a class="page-link" href="@BuildQueryString(Model.Pagination.CurrentPage + 1)">Next</a>
+                            </li>
+                        </ul>
+                    </nav>
+                }
+            </div>
+        </div>
+    </div>
+</div>
+
+@* Modal for Create Book *@
+<div class="modal fade" id="createBookModal" tabindex="-1" aria-labelledby="createBookModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+        </div>
+    </div>
+</div>
+
+@* Modal for Edit Book *@
+<div class="modal fade" id="editBookModal" tabindex="-1" aria-labelledby="editBookModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+        </div>
+    </div>
+</div>
+
+@* Modal for Delete Book *@
+@foreach (var book in Model.BookViewModel)
+{
+    <div class="modal fade" id="deleteModal-@book.BookId" tabindex="-1" aria-labelledby="deleteModalLabel-@book.BookId" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="deleteModalLabel-@book.BookId">Confirm Deletion</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    Are you sure you want to delete the book: <br />
+                    "<strong>@book.Title</strong>" by <strong>@book.Author</strong>?
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                    <form asp-page-handler="Delete" method="post" class="d-inline confirm-delete-form" data-book-id="@book.BookId">
+                        <input type="hidden" name="id" value="@book.BookId" />
+                        <button type="submit" class="btn btn-danger">Delete</button>
                     </form>
                 </div>
             </div>
-            <!-- End Search & Filter Card -->
-
-            <div class="table-box">
-                <div class="table-header">
-                    <span></span>
-                    <button type="button" class="btn btn-primary ms-2 create-btn" data-bs-toggle="modal" data-bs-target="#createBookModal" id="createNewBookBtn">
-                        <i class="bi bi-plus-circle me-1"></i> Create New
-                    </button>
-                </div>
-                <div class="table-responsive">
-                    <table class="user-table">
-                        <thead>
-                            <tr>
-                                <th>Image</th>
-                                <th>Title</th>
-                                <th>Author</th>
-                                <th>Category</th>
-                                <th>Price</th>
-                                <th>Stock</th>
-                                <th>Sold</th>
-                                <th>Status</th>
-                                <th>Created At</th>
-                                <th>Actions</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            @foreach (var book in Model.BookViewModel)
-                            {
-                                <tr>
-                                    <td>
-                                        @if (!string.IsNullOrEmpty(book.ImageUrl))
-                                        {
-                                            <img src="@book.ImageUrl" alt="Book Image" class="img-thumbnail" style="max-width:60px;max-height:80px;" />
-                                        }
-                                    </td>
-                                    <td>@book.Title</td>
-                                    <td>@book.Author</td>
-                                    <td>@book.CategoryName</td>
-                                    <td>@book.Price?.ToString("N0") đ</td>
-                                    <td>@book.Stock</td>
-                                    <td>@book.Sold</td>
-                                    <td>
-                                        @if (book.StatusDisplay == "Available")
-                                        {
-                                            <span class="badge badge-status-available">Available</span>
-                                        }
-                                        else if (book.StatusDisplay == "Sold Out")
-                                        {
-                                            <span class="badge badge-status-soldout">Sold Out</span>
-                                        }
-                                        else if (book.StatusDisplay == "Hidden")
-                                        {
-                                            <span class="badge badge-status-hide">Hidden</span>
-                                        }
-                                    </td>
-                                    <td>@book.CreatedAt?.ToString("yyyy-MM-dd")</td>
-                                    <td>
-                                        <button type="button"
-                                                class="icon-btn delete-btn"
-                                                title="Delete"
-                                                data-bs-toggle="modal"
-                                                data-bs-target="#deleteModal-@book.BookId"
-                                                onclick="event.stopPropagation();">
-                                            <i class="bi bi-trash"></i>
-                                        </button>
-                                        <button type="button"
-                                                class="icon-btn edit-btn me-2"
-                                                title="Edit"
-                                                data-bs-toggle="modal"
-                                                data-bs-target="#editBookModal"
-                                                data-book-id="@book.BookId"
-                                                onclick="event.stopPropagation();">
-                                            <i class="bi bi-pencil"></i>
-                                        </button>
-                                    </td>
-                                </tr>
-                            }
-                        </tbody>
-                    </table>
-                </div>
-                <div class="table-footer">
-                    @if (Model.Pagination.TotalPages > 1)
-                    {
-                        <nav aria-label="Page navigation">
-                            <ul class="pagination justify-content-center mt-4">
-                                <li class="page-item @(Model.Pagination.CurrentPage == 1 ? "disabled" : "")">
-                                    <a class="page-link" href="@BuildQueryString(Model.Pagination.CurrentPage - 1)">Previous</a>
-                                </li>
-                                @for (int i = 1; i <= Model.Pagination.TotalPages; i++)
-                                {
-                                    <li class="page-item @(i == Model.Pagination.CurrentPage ? "active" : "")">
-                                        <a class="page-link" href="@BuildQueryString(i)">@i</a>
-                                    </li>
-                                }
-                                <li class="page-item @(Model.Pagination.CurrentPage == Model.Pagination.TotalPages ? "disabled" : "")">
-                                    <a class="page-link" href="@BuildQueryString(Model.Pagination.CurrentPage + 1)">Next</a>
-                                </li>
-                            </ul>
-                        </nav>
-                    }
-                </div>
-            </div>
         </div>
     </div>
+}
 
-    @* Modal for Create Book *@
-    <div class="modal fade" id="createBookModal" tabindex="-1" aria-labelledby="createBookModalLabel" aria-hidden="true">
-        <div class="modal-dialog">
-            <div class="modal-content">
-            </div>
-        </div>
-    </div>
+@section Scripts {
+    <script>
+        console.log("Index.cshtml scripts section loaded!")
 
-    @* Modal for Create Book *@
-    <div class="modal fade" id="createBookModal" tabindex="-1" aria-labelledby="createBookModalLabel" aria-hidden="true">
-        <div class="modal-dialog">
-            <div class="modal-content">
-            </div>
-        </div>
-    </div>
+        $(document).ready(function () {
+            console.log("Document ready!");
 
-    @* Modal cho Delete Book (Need add class 'confirm-delete-btn' into submit button) *@
-    @foreach (var book in Model.BookViewModel)
-    {
-        <div class="modal fade" id="deleteModal-@book.BookId" tabindex="-1" aria-labelledby="deleteModalLabel-@book.BookId" aria-hidden="true">
-            <div class="modal-dialog">
-                <div class="modal-content">
-                    <div class="modal-header">
-                        <h5 class="modal-title" id="deleteModalLabel-@book.BookId">Confirm Deletion</h5>
-                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-                    </div>
-                    <div class="modal-body">
-                        Are you sure you want to delete the book: <br />
-                        "<strong>@book.Title</strong>" by <strong>@book.Author</strong>?
-                    </div>
-                    <div class="modal-footer">
-                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
-                        @*Add data and method confirm ddelete *@
-                        <form asp-page-handler="Delete" method="post" class="d-inline confirm-delete-form" data-book-id="@book.BookId">
-                            <input type="hidden" name="id" value="@book.BookId" />
-                            <button type="submit" class="btn btn-danger">Delete</button>
-                        </form>
-                    </div>
-                </div>
-            </div>
-        </div>
-    }
-
-    @section Scripts {
-        <script>
-            console.log("Index.cshtml scripts section loaded!")
-
-            $(document).ready(function () {
-                console.log("Document ready!");
-
-                $('#createBookModal').on('show.bs.modal', function (event) {
-                    console.log("Create Modal show event triggered!");
-                    var modal = $(this);
-                    $.get('@Url.Page("/Admin/Book/Create", "PartialForm")', function (data) {
-                        console.log("AJAX request for Create form completed!");
-                        modal.find('.modal-content').html(data);
-                        $.validator.unobtrusive.parse(modal.find('form'));
-                    }).fail(function(jqXHR, textStatus, errorThrown) {
-                        console.error("AJAX request for Create form failed:", textStatus, errorThrown, jqXHR.responseText);
-                        alert("Error loading create form: " + (jqXHR.responseJSON?.message || errorThrown));
-                    });
+            $('#createBookModal').on('show.bs.modal', function (event) {
+                console.log("Create Modal show event triggered!");
+                var modal = $(this);
+                $.get('@Url.Page("/Admin/Book/Index", "CreatePartialForm")', function (data) {
+                    console.log("AJAX request for Create form completed!");
+                    modal.find('.modal-content').html(data);
+                    $.validator.unobtrusive.parse(modal.find('form'));
+                }).fail(function(jqXHR, textStatus, errorThrown) {
+                    console.error("AJAX request for Create form failed:", textStatus, errorThrown, jqXHR.responseText);
+                    alert("Error loading create form: " + (jqXHR.responseJSON?.message || errorThrown));
                 });
+            });
 
-                // Event handler for submit form Create Book
-                $(document).on('submit', '#createBookModal form', function (e) {
-                    e.preventDefault();
-                    console.log("Form submitted from Create modal!");
+            // Event handler for submit form Create Book
+            $(document).on('submit', '#createBookModal form', function (e) {
+                e.preventDefault();
+                console.log("Form submitted from Create modal!");
 
-                    var form = $(this);
-                    if (form.valid()) {
-                        $.ajax({
-                            url: form.attr('action'),
-                            type: form.attr('method'),
-                            data: new FormData(form[0]),
-                            processData: false,
-                            contentType: false,
-                            success: function (response) {
-                                if (response.success) {
-                                    $('#createBookModal').modal('hide');
-                                    location.reload(); 
-                                    alert(response.message || "Book created successfully!");
-                                } else {
-                                    form.closest('.modal-content').html(response);
-                                    $.validator.unobtrusive.parse(form);
-                                    alert(response.message || "Error creating book.");
-                                }
-                            },
-                            error: function (xhr, status, error) {
-                                alert("An error occurred: " + (xhr.responseJSON?.message || error));
-                            }
-                        });
-                    }
-                });
-
-                // ========================= DELETE MODAL LOGIC =========================
-
-                // Event handler for submit form Delete Book (using event delegation)
-                $(document).on('submit', '.confirm-delete-form', function (e) {
-                    e.preventDefault();
-                    console.log("Delete form submitted via AJAX!");
-
-                    var form = $(this);
-                    var bookIdToDelete = form.data('book-id');
-
+                var form = $(this);
+                if (form.valid()) {
                     $.ajax({
                         url: form.attr('action'),
                         type: form.attr('method'),
-                        data: form.serialize(),
+                        data: new FormData(form[0]),
+                        processData: false,
+                        contentType: false,
                         success: function (response) {
                             if (response.success) {
-                                $('#deleteModal-' + bookIdToDelete).modal('hide');
+                                $('#createBookModal').modal('hide');
                                 location.reload();
-                                alert(response.message || "Book deleted successfully!");
+                                alert(response.message || "Book created successfully!");
                             } else {
-                                alert(response.message || "Error deleting book.");
+                                form.closest('.modal-content').html(response);
+                                $.validator.unobtrusive.parse(form);
+                                alert(response.message || "Error creating book.");
                             }
                         },
                         error: function (xhr, status, error) {
-                            alert("An error occurred during delete: " + (xhr.responseJSON?.message || error));
+                            alert("An error occurred: " + (xhr.responseJSON?.message || error));
                         }
                     });
+                }
+            });
+
+            // ========================= EDIT MODAL LOGIC =========================
+            $('#editBookModal').on('show.bs.modal', function (event) {
+                var button = $(event.relatedTarget); // Button that triggered the modal
+                var bookId = button.data('book-id'); // Extract info from data-* attributes
+                var modal = $(this);
+
+                console.log("Edit Modal show event triggered for Book ID:", bookId);
+
+                $.get('@Url.Page("/Admin/Book/Index", "EditPartialForm")', { id: bookId }, function (data) {
+                    console.log("AJAX request for Edit form completed for Book ID:", bookId);
+                    modal.find('.modal-content').html(data);
+                    // Re-parse unobtrusive validation for the newly loaded form
+                    $.validator.unobtrusive.parse(modal.find('form'));
+                }).fail(function(jqXHR, textStatus, errorThrown) {
+                    console.error("AJAX request for Edit form failed:", textStatus, errorThrown, jqXHR.responseText);
+                    alert("Error loading edit form: " + (jqXHR.responseJSON?.message || errorThrown));
                 });
             });
-        </script>
-    }
+
+            // Event handler for submit form Edit Book (using event delegation)
+            $(document).on('submit', '#editBookModal form', function (e) {
+                e.preventDefault();
+                console.log("Form submitted from Edit modal!");
+
+                var form = $(this);
+                if (form.valid()) {
+                    $.ajax({
+                        url: form.attr('action'),
+                        type: form.attr('method'),
+                        data: new FormData(form[0]), // Use FormData for file uploads (even if no file input, it's safer)
+                        processData: false,
+                        contentType: false,
+                        success: function (response) {
+                            if (response.success) {
+                                $('#editBookModal').modal('hide');
+                                location.reload(); // Reload the page to show updated data
+                                alert(response.message || "Book updated successfully!");
+                            } else {
+                                // If validation fails or there's an error, the server should return the partial view with validation errors
+                                form.closest('.modal-content').html(response);
+                                $.validator.unobtrusive.parse(form); // Re-parse validation
+                                alert(response.message || "Error updating book.");
+                            }
+                        },
+                        error: function (xhr, status, error) {
+                            alert("An error occurred: " + (xhr.responseJSON?.message || error));
+                        }
+                    });
+                }
+            });
+
+
+            // ========================= DELETE MODAL LOGIC =========================
+
+            // Event handler for submit form Delete Book (using event delegation)
+            $(document).on('submit', '.confirm-delete-form', function (e) {
+                e.preventDefault();
+                console.log("Delete form submitted via AJAX!");
+
+                var form = $(this);
+                var bookIdToDelete = form.data('book-id');
+
+                $.ajax({
+                    url: form.attr('action'),
+                    type: form.attr('method'),
+                    data: form.serialize(),
+                    success: function (response) {
+                        if (response.success) {
+                            $('#deleteModal-' + bookIdToDelete).modal('hide');
+                            location.reload();
+                            alert(response.message || "Book deleted successfully!");
+                        } else {
+                            alert(response.message || "Error deleting book.");
+                        }
+                    },
+                    error: function (xhr, status, error) {
+                        alert("An error occurred during delete: " + (xhr.responseJSON?.message || error));
+                    }
+                });
+            });
+        });
+    </script>
 }
