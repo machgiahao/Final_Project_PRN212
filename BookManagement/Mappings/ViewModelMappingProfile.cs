@@ -3,10 +3,12 @@ using BookManagement.BusinessObjects.Entities;
 using BookManagement.BusinessObjects.Enum;
 using BookManagement.Services.DTOs.Auth;
 using BookManagement.Services.DTOs.Book;
+using BookManagement.Services.DTOs.Category;
 using BookManagement.Services.DTOs.User;
 using BookManagement.ViewModels.Auth;
 using BookManagement.ViewModels.Book;
 using BookManagement.ViewModels.Cart;
+using BookManagement.ViewModels.Category;
 using BookManagement.ViewModels.Order;
 using BookManagement.ViewModels.User;
 
@@ -75,6 +77,12 @@ namespace BookManagement.Mappings
                     src.Status == 3 ? "Completed" :
                     src.Status == 4 ? "Cancelled" : "Unknown"
                 ));
+
+            // Cate
+            CreateMap<CateDto, EditCateViewModel>();
+            CreateMap<CreateCateViewModel, CreateCateDto>().ReverseMap();
+            CreateMap<EditCateViewModel, UpdateCateDto>().ReverseMap();
+            CreateMap<CateDto, CateViewModel>();
         }
     }
 }
