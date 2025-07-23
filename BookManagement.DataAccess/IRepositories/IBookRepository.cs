@@ -13,7 +13,7 @@ namespace BookManagement.DataAccess.IRepositories
     {
         Task AddBookAsync(Book book);
 
-        Task<Book?> GetBookByIdAsync(int id);
+        Task<Book?> GetBookByIdAsync(int? id);
         Task<IEnumerable<Book>> GetAllBooksAsync();
 
         Task UpdateBookAsync(Book book);

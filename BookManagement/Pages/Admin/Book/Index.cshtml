@@ -27,7 +27,7 @@
     <div class="book-admin-container">
         <div class="table-box">
             <div class="table-header">
-                <span>Book Management</span>
+                <span></span>
                 <button type="button" class="btn btn-primary ms-2 create-btn" data-bs-toggle="modal" data-bs-target="#createBookModal" id="createNewBookBtn">
                     <i class="bi bi-plus-circle me-1"></i> Create New
                 </button>
@@ -136,7 +136,7 @@
     </div>
 </div>
 
-@* Modal cho Delete Book (Need add class 'confirm-delete-btn' into button submit) *@
+@* Modal cho Delete Book (Need add class 'confirm-delete-btn' into submit button) *@
 @foreach (var book in Model.BookViewModel)
 {
     <div class="modal fade" id="deleteModal-@book.BookId" tabindex="-1" aria-labelledby="deleteModalLabel-@book.BookId" aria-hidden="true">

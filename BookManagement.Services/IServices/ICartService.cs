@@ -19,5 +19,6 @@ namespace BookManagement.Services.IServices
         Task ClearCartAsync(string userId);
         public Task<int> GetCartCountAsync(string userId);
         public Task<CartItem?> GetCartItemByBookIdAsync(int bookId, string userSId);
+        Task DeleteSoldOutItems(List<int> itemIds);
     }
 }

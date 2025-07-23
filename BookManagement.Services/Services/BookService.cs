@@ -31,7 +31,7 @@ namespace BookManagement.Services.Services
             }
         }
 
-        public async Task<Book?> GetBookByIdAsync(int id)
+        public async Task<Book?> GetBookByIdAsync(int? id)
         {
             try
             {
