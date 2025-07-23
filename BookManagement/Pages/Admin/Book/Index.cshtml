@@ -1,5 +1,5 @@
-﻿@page
-@model BookManagement.Pages.Admin.Book.IndexModel
+﻿    @page
+    @model BookManagement.Pages.Admin.Book.IndexModel
 @{
     ViewData["Title"] = "Book Management";
     Layout = "_AdminLayout";
@@ -24,14 +24,15 @@
             query.Add($"Filter.PageSize={Model.Pagination.PageSize}");
         return "?" + string.Join("&", query);
     }
-}
+    }
 <link rel="stylesheet" href="~/css/Dashboard/bookManagement.css" />
 
 <div class="book-admin-outer">
     <div class="book-admin-container">
+        <!-- Search & Filter Card -->
         <div class="card mb-4">
             <div class="card-header">
-                <strong>Book Search & Filter</strong>
+                <strong></strong>
             </div>
             <div class="card-body">
                 <form method="get" id="filterForm" class="row g-3 align-items-end">
@@ -77,9 +78,11 @@
                 </form>
             </div>
         </div>
+        <!-- End Search & Filter Card -->
+
         <div class="table-box">
             <div class="table-header">
-                <span>Book List</span>
+                <span></span>
                 <button type="button" class="btn btn-primary ms-2 create-btn" data-bs-toggle="modal" data-bs-target="#createBookModal" id="createNewBookBtn">
                     <i class="bi bi-plus-circle me-1"></i> Create New
                 </button>
@@ -188,15 +191,15 @@
     </div>
 </div>
 
-@* Modal for Edit Book *@
-<div class="modal fade" id="editBookModal" tabindex="-1" aria-labelledby="editBookModalLabel" aria-hidden="true">
+@* Modal for Create Book *@
+<div class="modal fade" id="createBookModal" tabindex="-1" aria-labelledby="createBookModalLabel" aria-hidden="true">
     <div class="modal-dialog">
         <div class="modal-content">
         </div>
     </div>
 </div>
 
-@* Modal for Delete Book *@
+@* Modal cho Delete Book (Need add class 'confirm-delete-btn' into submit button) *@
 @foreach (var book in Model.BookViewModel)
 {
     <div class="modal fade" id="deleteModal-@book.BookId" tabindex="-1" aria-labelledby="deleteModalLabel-@book.BookId" aria-hidden="true">
@@ -212,6 +215,7 @@
                 </div>
                 <div class="modal-footer">
                     <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                    @*Add data and method confirm ddelete *@
                     <form asp-page-handler="Delete" method="post" class="d-inline confirm-delete-form" data-book-id="@book.BookId">
                         <input type="hidden" name="id" value="@book.BookId" />
                         <button type="submit" class="btn btn-danger">Delete</button>
@@ -232,7 +236,7 @@
             $('#createBookModal').on('show.bs.modal', function (event) {
                 console.log("Create Modal show event triggered!");
                 var modal = $(this);
-                $.get('@Url.Page("/Admin/Book/Index", "CreatePartialForm")', function (data) {
+                $.get('@Url.Page("/Admin/Book/Create", "PartialForm")', function (data) {
                     console.log("AJAX request for Create form completed!");
                     modal.find('.modal-content').html(data);
                     $.validator.unobtrusive.parse(modal.find('form'));
@@ -273,58 +277,6 @@
                 }
             });
 
-            // ========================= EDIT MODAL LOGIC =========================
-            $('#editBookModal').on('show.bs.modal', function (event) {
-                var button = $(event.relatedTarget); // Button that triggered the modal
-                var bookId = button.data('book-id'); // Extract info from data-* attributes
-                var modal = $(this);
-
-                console.log("Edit Modal show event triggered for Book ID:", bookId);
-
-                $.get('@Url.Page("/Admin/Book/Index", "EditPartialForm")', { id: bookId }, function (data) {
-                    console.log("AJAX request for Edit form completed for Book ID:", bookId);
-                    modal.find('.modal-content').html(data);
-                    // Re-parse unobtrusive validation for the newly loaded form
-                    $.validator.unobtrusive.parse(modal.find('form'));
-                }).fail(function(jqXHR, textStatus, errorThrown) {
-                    console.error("AJAX request for Edit form failed:", textStatus, errorThrown, jqXHR.responseText);
-                    alert("Error loading edit form: " + (jqXHR.responseJSON?.message || errorThrown));
-                });
-            });
-
-            // Event handler for submit form Edit Book (using event delegation)
-            $(document).on('submit', '#editBookModal form', function (e) {
-                e.preventDefault();
-                console.log("Form submitted from Edit modal!");
-
-                var form = $(this);
-                if (form.valid()) {
-                    $.ajax({
-                        url: form.attr('action'),
-                        type: form.attr('method'),
-                        data: new FormData(form[0]), // Use FormData for file uploads (even if no file input, it's safer)
-                        processData: false,
-                        contentType: false,
-                        success: function (response) {
-                            if (response.success) {
-                                $('#editBookModal').modal('hide');
-                                location.reload(); // Reload the page to show updated data
-                                alert(response.message || "Book updated successfully!");
-                            } else {
-                                // If validation fails or there's an error, the server should return the partial view with validation errors
-                                form.closest('.modal-content').html(response);
-                                $.validator.unobtrusive.parse(form); // Re-parse validation
-                                alert(response.message || "Error updating book.");
-                            }
-                        },
-                        error: function (xhr, status, error) {
-                            alert("An error occurred: " + (xhr.responseJSON?.message || error));
-                        }
-                    });
-                }
-            });
-
-
             // ========================= DELETE MODAL LOGIC =========================
 
             // Event handler for submit form Delete Book (using event delegation)
@@ -355,4 +307,5 @@
             });
         });
     </script>
+    }
 }
