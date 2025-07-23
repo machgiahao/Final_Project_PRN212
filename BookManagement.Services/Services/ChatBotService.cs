@@ -19,7 +19,8 @@ namespace BookManagement.Services.Services
 
         public async Task<string> GetResponseAsync(string message)
         {
-            // gọi OpenAI API và trả về kết quả (như ví dụ trước)
+            string result = "";
+            return result;
         }
     }
 }
