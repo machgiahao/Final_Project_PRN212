@@ -68,8 +68,8 @@
                                 <option value="">All</option>
                                 @foreach (var status in Enum.GetValues(typeof(BookManagement.BusinessObjects.Enum.BookStatus)))
                                 {
-                                    var selected = Model.Filter.Status.HasValue && (int)status == (int)Model.Filter.Status.Value ? "selected" : "";
-                                <option value="@((int)status)" selected="@(Model.Filter.Status.HasValue && (int)status == (int)Model.Filter.Status.Value ? "selected" : null)">@status</option>
+                                    var selected = Model.Filter.Status.HasValue && status.Equals(Model.Filter.Status.Value) ? "selected" : "";
+                                <option value="@(status)" selected="@(Model.Filter.Status.HasValue && status.Equals(Model.Filter.Status.Value) ? "selected" : null)">@status</option>
                             }
                             </select>
                         </div>
