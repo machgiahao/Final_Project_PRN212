@@ -50,6 +50,7 @@ namespace BookManagement
             builder.Services.AddScoped<IOrderDetailService, OrderDetailService>();
             builder.Services.AddScoped<IOrderService, OrderService>();
             builder.Services.AddScoped<IBookService, BookService>();
+            builder.Services.AddScoped<IEmailService, EmailService>();
 
             //Configure Authorization
             builder.Services.AddAuthentication(CookieAuthenticationDefaults.AuthenticationScheme)

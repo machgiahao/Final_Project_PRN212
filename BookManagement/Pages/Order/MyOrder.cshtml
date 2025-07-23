@@ -91,3 +91,17 @@
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/4.1.1/animate.min.css" />
 <script src="~/js/signalR/dist/browser/signalr.js"></script>
 <script src="~/js/site.js"></script>
+<script>
+    window.addEventListener('DOMContentLoaded', function () {
+        var alert = document.querySelector('.alert-success');
+        if (alert) {
+            setTimeout(function () {
+                alert.classList.remove('show');
+                alert.classList.add('fade');
+                setTimeout(function () {
+                    alert.style.display = 'none';
+                }, 500);
+            }, 3000);
+        }
+    });
+</script>

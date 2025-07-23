@@ -66,9 +66,6 @@
         </div>
 
         <div class="table-box">
-            <div class="table-header">
-                <span>Table List Orders</span>
-            </div>
             <table class="user-table">
                 <thead>
                     <tr>
@@ -104,7 +101,8 @@
                                                 _ => "order-status-select"
                                             };
                                         }
-                                        <select name="newStatus" class="@statusClass" onchange="this.form.submit();" onclick="event.stopPropagation();">
+                                        <select name="newStatus" class="@statusClass" onchange="this.form.submit();" onclick="event.stopPropagation();"
+                                        @(order.Status == 4 ? "disabled" : "")>
                                             @foreach (var opt in statusOptions)
                                             {
                                                 if (order.Status == opt.Value)
