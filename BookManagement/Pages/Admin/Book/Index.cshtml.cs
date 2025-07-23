@@ -7,6 +7,7 @@ using Microsoft.AspNetCore.Authorization;
 using AutoMapper;
 using BookManagement.BusinessObjects.Entities;
 using BookManagement.Services.DTOs.Book;
+using BookManagement.ViewModels.Category;
 
 namespace BookManagement.Pages.Admin.Book
 {
@@ -22,7 +23,7 @@ namespace BookManagement.Pages.Admin.Book
         }
 
         public List<BusinessObjects.Entities.Book> Books { get; set; } = new();
-        public List<Category> Categories { get; set; } = new();
+        public List<CateFilterViewModel> Categories { get; set; } = new();
         public PaginationViewModel Pagination { get; set; } = new();
         public IList<BookViewModel> BookViewModel { get; private set; }
         [BindProperty(SupportsGet = true)]

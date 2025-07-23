@@ -1,7 +1,9 @@
 ﻿using AutoMapper;
 using BookManagement.BusinessObjects.Entities;
 using BookManagement.Services.DTOs.Book;
+using BookManagement.Services.DTOs.Category;
 using BookManagement.Services.IServices;
+using BookManagement.ViewModels.Category;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 using System.Security.Claims;
@@ -26,17 +28,21 @@ namespace BookManagement.Pages.Admin.Book
         [BindProperty]
         public CreateBookDto NewBook { get; set; }
 
-        public List<Category> Categories { get; set; } = new();
+        public List<CateFilterViewModel> Categories { get; set; } = new();
 
         public async Task<IActionResult> OnGetPartialForm()
         {
-            Categories = (await _categoryService.GetAllCategoriesAsync())?.ToList() ?? new List<Category>();
+            var catePagedResult = await _categoryService.GetAllCategoriesAsync(1, 9, null, null, null);
+
+            Categories = _mapper.Map<List<CateFilterViewModel>>(catePagedResult.Items);
             return Page();
         }
 
         public async Task<IActionResult> OnPostAsync()
         {
-            Categories = (await _categoryService.GetAllCategoriesAsync())?.ToList() ?? new List<Category>();
+            var catePagedResult = await _categoryService.GetAllCategoriesAsync(1, 9, null, null, null);
+
+            Categories = _mapper.Map<List<CateFilterViewModel>>(catePagedResult.Items);
 
             if (!ModelState.IsValid)
             {

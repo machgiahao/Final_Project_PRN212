@@ -8,6 +8,6 @@ namespace BookManagement.Services.IServices
 {
     public interface IChatBotService
     {
-        Task<string> GetResponseAsync(string message);
+        Task<string> AskAsync(string prompt);
     }
 }
