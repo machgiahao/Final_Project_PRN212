@@ -187,5 +187,22 @@ namespace BookManagement.DataAccess.Repositories
                 throw new Exception($"An error occurred while retrieving the cart count for user ID {userId}.", ex);
             }
         }
+
+        public Task DeleteSoldOutItems(List<int> itemIds)
+        {
+            try
+            {
+                _context.CartItems.RemoveRange(_context.CartItems.Where(ci => itemIds.Contains((int)ci.BookId)));
+                return _context.SaveChangesAsync();
+            }
+            catch (DbUpdateException ex)
+            {
+                throw new Exception("An error occurred while deleting sold-out items from the cart.", ex);
+            }
+            catch (Exception ex)
+            {
+                throw new Exception("An unexpected error occurred while deleting sold-out items from the cart.", ex);
+            }
+        }
     }
 }

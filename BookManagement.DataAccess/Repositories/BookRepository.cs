@@ -78,7 +78,7 @@ namespace BookManagement.DataAccess.Repositories
             }
         }
 
-        public async Task<Book?> GetBookByIdAsync(int id)
+        public async Task<Book?> GetBookByIdAsync(int? id)
         {
             try
             {
@@ -105,7 +105,7 @@ namespace BookManagement.DataAccess.Repositories
             }
         }
 
-        public async Task<PagedResult<Book>> GetBooksPagedAsync(int pageNumber, int pageSize, List<int> categoryIds = null, decimal? minPrice = null, decimal? maxPrice = null, string? title = null, string? role = null)
+        public async Task<PagedResult<Book>> GetBooksPagedAsync(int pageNumber, int pageSize, List<int> categoryIds = null, decimal? minPrice = null, decimal? maxPrice = null, string? title = null, string? role = null, BookStatus? bookStatus = null)
         {
             var query = _context.Books.Include(b => b.Category).AsQueryable();
 
@@ -129,6 +129,10 @@ namespace BookManagement.DataAccess.Repositories
             if(role != "Admin")
             {
                 query = query.Where(b => b.Status == BookStatus.Available);
+            }
+            if (bookStatus.HasValue)
+            {
+                query = query.Where(b => b.Status == bookStatus.Value);
             }
 
             int totalCount = await query.CountAsync();

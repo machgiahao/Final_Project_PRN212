@@ -13,13 +13,13 @@ namespace BookManagement.DataAccess.IRepositories
     {
         Task AddBookAsync(Book book);
 
-        Task<Book?> GetBookByIdAsync(int id);
+        Task<Book?> GetBookByIdAsync(int? id);
         Task<IEnumerable<Book>> GetAllBooksAsync();
 
         Task UpdateBookAsync(Book book);
         
         Task DeleteBookAsync(int id);
-        Task<PagedResult<Book>> GetBooksPagedAsync(int pageNumber, int pageSize, List<int> categoryIds = null, decimal? minPrice = null, decimal? maxPrice = null, string? title = null, string? role = null);
+        Task<PagedResult<Book>> GetBooksPagedAsync(int pageNumber, int pageSize, List<int> categoryIds = null, decimal? minPrice = null, decimal? maxPrice = null, string? title = null, string? role = null, BookStatus? status = null);
         Task UpdateBookStockAsync(int? bookId, int changeQuantity);
 
     }

@@ -61,7 +61,7 @@ namespace BookManagement.Pages.Cart
         public PurchaseViewModel Purchase { get; set; }
         public async Task<IActionResult> OnPostConfirmPurchaseAsync()
         {
-            var userId = User.FindFirstValue(System.Security.Claims.ClaimTypes.NameIdentifier) ?? "";
+            var userId = User.FindFirstValue(ClaimTypes.NameIdentifier) ?? "";
             var cartItems = await _cartService.GetCartItemsByUserIdAsync(userId);
 
             var selectedItems = cartItems
@@ -81,6 +81,7 @@ namespace BookManagement.Pages.Cart
             order.TotalPrice = totalPrice ?? 0;
 
             await _orderService.AddOrderAsync(order);
+            List<int> listSoldOutBookIds = new List<int>();
 
             // Save order detail
             foreach (var item in selectedItems)
@@ -92,12 +93,19 @@ namespace BookManagement.Pages.Cart
                     Quantity = item.Quantity,
                     UnitPrice = item.Book.Price.GetValueOrDefault()
                 };
+                var bookEntity = await _bookService.GetBookByIdAsync(item.BookId);
+                if (item.Quantity == bookEntity.Stock)
+                {
+                    bookEntity.Status = BusinessObjects.Enum.BookStatus.SoldOut;
+                    listSoldOutBookIds.Add(bookEntity.BookId);
+                }
                 await _orderDetailService.AddOrderDetailAsync(orderDetail);
                 await _bookService.UpdateBookStockAsync(item.BookId, -item.Quantity);
             }
 
             // Delete item in cart has been purchased
             await _cartService.RemoveCartItemsAsync(userId, SelectedCartItemIds);
+            await _cartService.DeleteSoldOutItems(listSoldOutBookIds);
             // Send email notification
             string email = User.FindFirstValue(ClaimTypes.Email) ?? "";
             int orderId = order.OrderId;

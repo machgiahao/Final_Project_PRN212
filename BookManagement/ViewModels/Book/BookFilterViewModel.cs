@@ -1,4 +1,6 @@
-﻿namespace BookManagement.ViewModels.Book
+﻿using BookManagement.BusinessObjects.Enum;
+
+namespace BookManagement.ViewModels.Book
 {
     public class BookFilterViewModel
     {
@@ -9,5 +11,6 @@
         public int PageSize { get; set; } = 10;
         public string Title { get; set; } = string.Empty;
         public string? Role { get; set; }
+        public BookStatus? Status { get; set; }
     }
 }

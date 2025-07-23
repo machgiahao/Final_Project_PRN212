@@ -53,5 +53,9 @@ namespace BookManagement.Services.Services
         {
             return await _cartRepository.GetCartItemByBookIdAsync(bookId, userId);
         }
+        public async Task DeleteSoldOutItems(List<int> itemIds)
+        {
+            await _cartRepository.DeleteSoldOutItems(itemIds);
+        }
     }
 }

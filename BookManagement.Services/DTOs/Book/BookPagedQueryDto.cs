@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using BookManagement.BusinessObjects.Enum;
 
 namespace BookManagement.Services.DTOs.Book
 {
@@ -15,5 +16,6 @@ namespace BookManagement.Services.DTOs.Book
         public decimal? MaxPrice { get; set; }
         public string? Title { get; set; }
         public string? Role { get; set; }
+        public BookStatus? Status { get; set; }
     }
 }

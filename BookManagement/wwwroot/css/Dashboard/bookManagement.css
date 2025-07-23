@@ -1,71 +1,115 @@
-﻿.book-admin-outer {
-    background: #fff;
-    border-radius: 16px;
-    box-shadow: 0 2px 16px rgba(0,0,0,0.06);
-    padding: 32px 24px;
-    margin: 24px auto;
-    max-width: 1200px;
+﻿body {
+    background: #f4f7fb;
+    font-family: 'Segoe UI', 'Roboto', Arial, sans-serif;
+}
+
+.book-admin-outer {
+    display: flex;
+    justify-content: center;
+    padding: 32px 0;
+    background: #f4f7fb;
 }
 
 .book-admin-container {
     width: 100%;
+    max-width: 1200px;
 }
 
 .table-box {
-    background: #f8fafc;
-    border-radius: 12px;
-    box-shadow: 0 1px 4px rgba(0,0,0,0.04);
-    padding: 24px;
+    background: #fff;
+    border-radius: 18px;
+    box-shadow: 0 4px 24px rgba(30, 136, 229, 0.07);
+    padding: 28px;
     margin-bottom: 0;
+    border: 1.5px solid #e3eafc;
 }
 
 .table-header {
     display: flex;
     justify-content: space-between;
     align-items: center;
-    font-size: 1.5rem;
+    margin-bottom: 16px;
+    font-size: 1.25rem;
     font-weight: 600;
-    margin-bottom: 18px;
-    color: #3a86ff;
-    letter-spacing: 1px;
+    color: #1976d2;
+    letter-spacing: 0.5px;
 }
 
-.create-btn {
-    font-size: 1rem;
-    font-weight: 500;
-    padding: 8px 18px;
-    border-radius: 8px;
+/* Styles for the Create New button */
+.btn {
+    padding: 10px 28px;
+    border: none;
+    border-radius: 12px;
+    font-size: 16px;
+    cursor: pointer;
+    font-weight: 600;
+    text-decoration: none;
+    display: inline-flex;
+    align-items: center;
+    transition: background 0.2s, color 0.2s, box-shadow 0.2s;
+    box-shadow: 0 2px 8px rgba(30,136,229,0.04);
+    letter-spacing: 0.2px;
 }
+
+.btn-primary {
+    /* Ensure the gradient is correctly applied */
+    background: linear-gradient(90deg, #1976d2 0%, #42a5f5 100%);
+    color: #fff;
+    box-shadow: 0 2px 8px rgba(25, 118, 210, 0.10);
+}
+
+    .btn-primary:hover {
+        background: linear-gradient(90deg, #1565c0 0%, #1976d2 100%);
+        color: #fff;
+    }
 
 .user-table {
     width: 100%;
-    border-collapse: collapse;
+    border-collapse: separate;
+    border-spacing: 0;
     background: #fff;
     border-radius: 10px;
     overflow: hidden;
     box-shadow: 0 1px 4px rgba(0,0,0,0.04);
+    margin-bottom: 8px;
 }
 
     .user-table th, .user-table td {
-        padding: 10px 14px;
+        padding: 14px 16px;
         text-align: left;
         vertical-align: middle;
+        border-bottom: 1.5px solid #e3eafc;
+        font-size: 16px;
     }
 
     .user-table th {
-        background: #f0f4fa;
-        font-weight: 600;
-        color: #3a86ff;
-        border-bottom: 2px solid #e0e7ef;
+        background: #f4f7fb;
+        font-weight: 700;
+        color: #1976d2;
+        border-top: 1.5px solid #e3eafc;
+        letter-spacing: 0.5px;
     }
 
-    .user-table tr:nth-child(even) {
-        background: #f8fafc;
+    .user-table tr:last-child td {
+        border-bottom: none;
     }
 
     .user-table tr:hover {
-        background: #eaf6ff;
+        background: #f0f4ff;
+        transition: background 0.2s;
     }
+
+    /* --- MODIFIED/ADDED FOR NO WRAPPING --- */
+    /* Ensure price does not wrap */
+    .user-table td:nth-child(5) { /* Targeting the Price column (5th td) */
+        white-space: nowrap;
+    }
+
+    /* Ensure Created At does not wrap */
+    .user-table td:nth-child(9) { /* Targeting the Created At column (9th td) */
+        white-space: nowrap;
+    }
+/* --- END MODIFIED/ADDED --- */
 
 .img-thumbnail {
     border-radius: 8px;
@@ -82,28 +126,99 @@
     letter-spacing: 0.5px;
 }
 
-.table-footer {
-    margin-top: 18px;
-}
-
-.pagination .page-link {
-    color: #3a86ff;
-    border-radius: 6px;
-    margin: 0 2px;
-    font-weight: 500;
-}
-
-.pagination .page-item.active .page-link {
-    background: #3a86ff;
+.badge-status-available {
+    background: #43aa8b;
     color: #fff;
-    border-color: #3a86ff;
 }
 
-.pagination .page-item.disabled .page-link {
-    color: #aaa;
-    background: #f0f4fa;
-    border-color: #e0e7ef;
+.badge-status-soldout {
+    background: #e63946;
+    color: #fff;
 }
+
+.badge-status-hide {
+    background: #6c757d;
+    color: #fff;
+}
+
+.table-footer {
+    display: flex;
+    justify-content: flex-end;
+    align-items: center;
+    padding-top: 12px;
+    font-size: 15px;
+}
+
+.pagination {
+    display: flex;
+    gap: 4px;
+}
+
+    .pagination .page-item {
+        display: inline-block;
+    }
+
+    .pagination .page-link {
+        display: inline-block;
+        padding: 7px 16px;
+        border-radius: 8px;
+        background: #f0f4fa;
+        color: #1976d2;
+        text-decoration: none;
+        border: 1.5px solid transparent;
+        margin: 0 1px;
+        font-weight: 600;
+        transition: background 0.2s, color 0.2s;
+    }
+
+        .pagination .page-item.active .page-link,
+        .pagination .page-link:hover {
+            background: linear-gradient(90deg, #1976d2 0%, #42a5f5 100%);
+            color: #fff;
+            border: 1.5px solid #1976d2;
+        }
+
+    .pagination .page-item.disabled .page-link {
+        color: #bdbdbd;
+        pointer-events: none;
+        background: #f0f4fa;
+        border: 1.5px solid #e3eafc;
+    }
+
+/* Action icons - Ensure they are side-by-side */
+.user-table td:last-child { /* Target the last column (Actions) */
+    display: flex; /* Use flexbox for horizontal alignment */
+    gap: 8px; /* Space between icons */
+    align-items: center; /* Vertically align icons */
+}
+
+.icon-btn {
+    font-size: 18px;
+    /* margin-right: 8px; Removed as gap handles spacing */
+    text-decoration: none;
+    vertical-align: middle;
+    background: none;
+    border: none;
+    padding: 0;
+    cursor: pointer;
+    display: inline-flex;
+    align-items: center;
+    transition: transform 0.15s;
+}
+
+    .icon-btn:hover {
+        transform: scale(1.18);
+    }
+
+    .icon-btn.delete-btn i {
+        color: #e53935;
+        font-size: 20px;
+    }
+
+    .icon-btn.edit-btn i {
+        color: #ff9800;
+        font-size: 20px;
+    }
 
 @media (max-width: 900px) {
     .book-admin-outer {
@@ -124,27 +239,9 @@
     .user-table th, .user-table td {
         padding: 7px 6px;
     }
-}
 
-.badge-status {
-    font-size: 0.95em;
-    padding: 0.45em 0.8em;
-    border-radius: 0.7em;
-    font-weight: 500;
-    letter-spacing: 0.5px;
-    color: #fff;
-    display: inline-block;
+        .user-table td:last-child {
+            flex-direction: row; /* Ensure they remain row on small screens */
+            justify-content: flex-start;
+        }
 }
-
-.badge-status-available {
-    background: #43aa8b;
-}
-
-.badge-status-soldout {
-    background: #e63946;
-}
-
-.badge-status-hide {
-    background: #6c757d;
-}
-
