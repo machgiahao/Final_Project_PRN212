@@ -15,10 +15,12 @@ namespace BookManagement.Pages.Admin.Book
     public class IndexModel : PageModel
     {
         private readonly IBookService _bookService;
+        private readonly ICategoryService _categoryService;
         private readonly IMapper _mapper;
-        public IndexModel(IBookService bookService, IMapper mapper)
+        public IndexModel(IBookService bookService, ICategoryService categoryService, IMapper mapper)
         {
             _bookService = bookService;
+            _categoryService = categoryService;
             _mapper = mapper;
         }
 
@@ -34,6 +36,7 @@ namespace BookManagement.Pages.Admin.Book
             Filter.Role = "Admin";
 
             var filter = _mapper.Map<BookPagedQueryDto>(Filter);
+            AllCategories = (await _categoryService.GetAllCategoriesAsync()).ToList();
             var pagedResult = await _bookService.GetBooksPagedAsync(filter);
 
             Books = pagedResult.Items.ToList();
