@@ -108,7 +108,6 @@ namespace BookManagement.Pages.Cart
             await _cartService.DeleteSoldOutItems(listSoldOutBookIds);
             // Send email notification
             string email = User.FindFirstValue(ClaimTypes.Email) ?? "";
-            string name = User.FindFirstValue(ClaimTypes.Name) ?? "";
             int orderId = order.OrderId;
             var emailDto = new EmailDto
             {

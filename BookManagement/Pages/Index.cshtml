@@ -124,8 +124,8 @@
         <div class="row align-items-center justify-content-center">
             <div class="col-md-5 mb-4 mb-md-0">
                 <h4 class="fw-bold mb-3">Join Book Lovers<br />Community and Get<br />Latest Updates</h4>
-                <form class="d-flex" style="max-width: 350px;">
-                    <input type="email" class="form-control me-2" placeholder="Your Email Address" required />
+                <form class="d-flex" method="post" asp-page-handler="Subscribe" style="max-width: 350px;">
+                    <input type="email" class="form-control me-2" name="SubscriberEmail" placeholder="Your Email Address" required />
                     <button type="submit" class="btn btn-warning fw-semibold px-3" style="min-width: 110px;">SUBSCRIBE</button>
                 </form>
             </div>
