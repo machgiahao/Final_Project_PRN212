@@ -17,12 +17,16 @@ namespace BookManagement.Pages.Admin.Order
     public class IndexModel : PageModel
     {
         private readonly IOrderService _orderService;
+        private readonly IOrderDetailService _orderDetailService;
+        private readonly IBookService _bookService;
         private readonly IMapper _mapper;
         private readonly IHubContext<SignalRServer> _hubContext;
         private readonly IEmailService _emailService;
-        public IndexModel(IOrderService orderService, IMapper mapper, IHubContext<SignalRServer> hubContext, IEmailService emailService)
+        public IndexModel(IOrderService orderService, IOrderDetailService orderDetailService, IBookService bookService, IMapper mapper, IHubContext<SignalRServer> hubContext, IEmailService emailService)
         {
             _orderService = orderService;
+            _orderDetailService = orderDetailService;
+            _bookService = bookService;
             _mapper = mapper;
             _hubContext = hubContext;
             _emailService = emailService;
@@ -55,6 +59,24 @@ namespace BookManagement.Pages.Admin.Order
             if (order != null)
             {
                 order.Status = newStatus;
+                if (order.Status == 4)
+                {
+                    IEnumerable<OrderDetail> orderDetails = await _orderDetailService.GetOrderDetailsByOrderIdAsync(orderId);
+                    foreach (var orderDetail in orderDetails)
+                    {
+                        var book = await _bookService.GetBookByIdAsync(orderDetail.BookId);
+                        if (book != null)
+                        {
+                            if (book.Stock == 0)
+                            {
+                                book.Status = 0;
+                            }
+                            book.Stock += orderDetail.Quantity;
+                            book.Sold -= orderDetail.Quantity;
+                            await _bookService.UpdateBookAsync(book);
+                        }
+                    }
+                }
                 await _orderService.UpdateOrderAsync(order);
                 var statusText = GetStatusText(newStatus);
                 var emailDto = new EmailDto
